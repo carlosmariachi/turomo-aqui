@@ -8,70 +8,125 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:Arial,sans-serif;background:#f5f5f5}
-header{background:#ff6b00;color:white;padding:15px;display:flex;align-items:center;justify-content:space-between}
+header{background:#ff6b00;color:white;padding:15px;text-align:center}
 header h1{font-size:22px}
 header p{font-size:12px;margin-top:3px}
-header img{width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid white;flex-shrink:0}
-.banner{background:#00c853;color:white;text-align:center;padding:20px 15px}
+header img{width:80px;height:80px;border-radius:50%;object-fit:cover;margin-top:8px}
+.banner{background:#00c853;color:white;text-align:center;padding:12px}
 .banner h2{font-size:15px}
 .banner p{font-size:13px;margin:6px 0}
 .banner .abierto{font-weight:bold}
-.banner a{display:block;background:white;color:#00c853;font-weight:bold;font-size:18px;text-align:center;padding:15px;margin-top:15px;border-radius:12px;text-decoration:none}
+.banner a{display:block;background:white;color:#00c853;text-decoration:none;padding:10px;border-radius:20px;font-weight:bold;margin-top:8px}
 #map{height:450px;width:100%}
-.marcador{font-size:32px;text-align:center;line-height:1;text-shadow:0 2px 5px rgba(0,0,0,0.4)}
+.marcador{font-size:32px;text-align:center;line-height:1}
 .marcador-borracho{font-size:38px}
 .titilando{animation:titila 1s infinite}
-@keyframes titila{0%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:0.5}100%{transform:scale(1);opacity:1}}
+@keyframes titila{0%{transform:scale(1);opacity:1}50%{transform:scale(1.2);opacity:0.7}100%{transform:scale(1);opacity:1}}
+.btn-ubicacion{background:#ff6b00;color:white;border:none;padding:10px 15px;border-radius:20px;font-weight:bold;margin-top:8px;width:100%;font-size:14px}
 </style>
 </head>
 <body>
 <header>
 <div>
-<h1>🍾 Tu Romo Aquí</h1>
-<p>📍 Licorerías cerca de ti en Santo Domingo</p>
-</div>
+<h1>🍷 Tu Romo Aquí</h1>
+<p>Licorerías cerca de ti en Santo Domingo</p>
 <img src="IMG_7927.jpeg">
+</div>
 </header>
 <div class="banner">
 <h2>⭐ TU LICORERÍA MÁS CERCANA</h2>
 <p id="cercaTexto">Buscando tu ubicación...</p>
 <p class="abierto" id="horarioTexto">🟢 Buscando horario...</p>
-<a id="comoLlegar" href="#" target="_blank">📍 Cómo Llegar</a>
+<a id="comoLlegar" href="#" target="_blank">📍 CÓMO LLEGAR</a>
+<button class="btn-ubicacion" onclick="pedirUbicacion()">📍 USAR MI UBICACIÓN</button>
 </div>
 <div id="map"></div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 var map = L.map('map').setView([18.49,-69.86],13);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-var iconoBotella = L.divIcon({className: '', html: '<div class="marcador">🍾</div>', iconSize: [40, 40], iconAnchor: [20, 35]});
-var iconoBotellaCercana = L.divIcon({className: '', html: '<div class="marcador titilando">🍾</div>', iconSize: [50, 50], iconAnchor: [25, 40]});
-var iconoBorracho = L.divIcon({className: '', html: '<div class="marcador marcador-borracho">🥴</div>', iconSize: [45, 45], iconAnchor: [22, 40]});
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
+
+var iconoBotella = L.divIcon({className:'', html:'<div class="marcador">🍾</div>', iconSize:[32,32]});
+var iconoBotellaCercana = L.divIcon({className:'', html:'<div class="marcador titilando">🍾</div>', iconSize:[32,32]});
+var iconoBorracho = L.divIcon({className:'', html:'<div class="marcador-borracho">🥴</div>', iconSize:[38,38]});
+
 function distKm(lat1,lng1,lat2,lng2){
-const R=6371;
-const dLat=(lat2-lat1)*Math.PI/180;
-const dLng=(lng2-lng1)*Math.PI/180;
-const a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)*Math.sin(dLng/2);
-return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+  const R=6371;
+  const dLat=(lat2-lat1)*Math.PI/180;
+  const dLng=(lng2-lng1)*Math.PI/180;
+  const a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)*Math.sin(dLng/2);
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
-fetch('tiendas.json').then(r=>r.json()).then(tiendas=>{
-var marcadores=[];
-tiendas.forEach((t)=>{
-var m = L.marker([t.lat,t.lng], {icon: iconoBotella}).addTo(map).bindPopup("🍾 <b>"+t.nombre+"</b><br>"+t.zona+"<br>🟢 "+t.horario+"<br>📞 "+t.telefono);
-marcadores.push(m);
-});
+
+// ESTO ES LO QUE PROTEGE TUS DIRECCIONES:
+// Lee tu tiendas.json como sea que lo escribiste
+function normalizar(t){
+  return {
+    nombre: t.nombre || t.name || t.tienda || t.titulo || 'Licorería',
+    lat: parseFloat(t.lat ?? t.latitud ?? t.latitude ?? t.Latitud),
+    lng: parseFloat(t.lng ?? t.lon ?? t.longitud ?? t.longitude ?? t.lngitud),
+    direccion: t.direccion || t.address || t.ubicacion || t.dir || '',
+    horario: t.horario || t.hora || t.horas || 'Ver horario en tienda'
+  };
+}
+
+var tiendas = [];
+var marcadores = [];
+var miUbicacion = null;
+
 function mostrarCercana(lat,lng){
-let mejorIndex=0, mejorD=9999, mejor=tiendas[0];
-tiendas.forEach((t,i)=>{let d=distKm(lat,lng,t.lat,t.lng); if(d<mejorD){mejorD=d; mejor=t; mejorIndex=i;}});
-document.getElementById('cercaTexto').innerText = mejor.nombre + " - " + mejor.zona + " (" + mejorD.toFixed(1) + " km)";
-document.getElementById('horarioTexto').innerText = "🟢 " + mejor.horario;
-document.getElementById('comoLlegar').href = 'https://www.google.com/maps/dir/?api=1&destination='+mejor.lat+','+mejor.lng;
-marcadores.forEach((m,i)=>{ if(i===mejorIndex){m.setIcon(iconoBotellaCercana);} else {m.setIcon(iconoBotella);} });
-map.setView([lat,lng],13);
-L.marker([lat,lng], {icon: iconoBorracho}).addTo(map).bindPopup("🥴 Tú estás aquí").openPopup();
+  if(!tiendas || tiendas.length===0){
+    document.getElementById('cercaTexto').innerText = 'Cargando tiendas...';
+    return;
+  }
+  let mejorIndex=0, mejorD=9999, mejor=tiendas[0];
+  tiendas.forEach((t,i)=>{
+    let d=distKm(lat,lng,t.lat,t.lng);
+    if(d<mejorD){mejorD=d;mejorIndex=i;mejor=t;}
+  });
+  document.getElementById('cercaTexto').innerText = 'La más cerca: ' + mejor.nombre + ' - a ' + mejorD.toFixed(2) + ' km' + (mejor.direccion ? ' - ' + mejor.direccion : '');
+  document.getElementById('horarioTexto').innerText = '🟢 Abierto - ' + mejor.horario;
+  document.getElementById('comoLlegar').href = 'https://www.google.com/maps/dir/?api=1&destination=' + mejor.lat + ',' + mejor.lng;
+  marcadores.forEach((m,i)=>{ 
+    if(i===mejorIndex){ m.setIcon(iconoBotellaCercana); } else { m.setIcon(iconoBotella); }
+  });
+  map.setView([lat,lng],13);
+  if(miUbicacion){ map.removeLayer(miUbicacion); }
+  miUbicacion = L.marker([lat,lng], {icon: iconoBorracho}).addTo(map);
 }
-if(navigator.geolocation){
-navigator.geolocation.getCurrentPosition(p=>mostrarCercana(p.coords.latitude,p.coords.longitude), ()=>mostrarCercana(18.49,-69.86), {enableHighAccuracy:true});
-} else { mostrarCercana(18.49,-69.86); }
+
+function pedirUbicacion(){
+  document.getElementById('cercaTexto').innerText = 'Buscando tu ubicación...';
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(
+      p=>mostrarCercana(p.coords.latitude, p.coords.longitude),
+      ()=>mostrarCercana(18.49,-69.86),
+      {timeout:5000, maximumAge:60000}
+    );
+  } else {
+    mostrarCercana(18.49,-69.86);
+  }
+  setTimeout(()=>{
+    let texto = document.getElementById('cercaTexto').innerText;
+    if(texto.includes('Buscando') || texto.includes('Cargando')){
+      mostrarCercana(18.49,-69.86);
+    }
+  }, 6000);
+}
+
+// Carga tu tiendas.json SIN MODIFICARLO
+fetch('tiendas.json').then(r=>r.json()).then(datos=>{
+  // Si es un array directo o si viene dentro de un objeto
+  let lista = Array.isArray(datos) ? datos : (datos.tiendas || datos.data || []);
+  tiendas = lista.map(normalizar).filter(t=>!isNaN(t.lat) && !isNaN(t.lng));
+  tiendas.forEach((ti)=>{
+    var m = L.marker([ti.lat,ti.lng], {icon: iconoBotella}).addTo(map);
+    m.bindPopup('<b>'+ti.nombre+'</b><br>'+(ti.direccion||'')+'<br>'+ti.horario);
+    marcadores.push(m);
+  });
+  pedirUbicacion();
+}).catch(()=>{
+  document.getElementById('cercaTexto').innerText = 'No se pudieron cargar las tiendas';
 });
 </script>
 </body>
