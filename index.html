@@ -18,6 +18,14 @@ header img{width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px 
 .banner .abierto{font-weight:bold}
 .banner a{display:block;background:white;color:#00c853;font-weight:bold;font-size:18px;text-align:center;padding:15px;margin-top:15px;border-radius:12px;text-decoration:none}
 #map{height:450px;width:100%}
+.marcador{font-size:32px;text-align:center;line-height:1;text-shadow:0 2px 5px rgba(0,0,0,0.4)}
+.marcador-borracho{font-size:38px}
+.titilando{animation:titila 1s infinite}
+@keyframes titila{
+0%{transform:scale(1);opacity:1}
+50%{transform:scale(1.5);opacity:0.5}
+100%{transform:scale(1);opacity:1}
+}
 </style>
 </head>
 <body>
@@ -46,11 +54,37 @@ const tiendas=[
 {nombre:"Licorería El Primo", zona:"Los Alcarrizos", lat:18.519, lng:-70.023},
 {nombre:"Licorería La Esquina", zona:"Los Alcarrizos", lat:18.521, lng:-69.991}
 ];
+
 var map = L.map('map').setView([18.519,-70.023],13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-tiendas.forEach(t=>{
-L.marker([t.lat,t.lng]).addTo(map).bindPopup("<b>"+t.nombre+"</b><br>"+t.zona);
+
+var iconoBotella = L.divIcon({
+className: '',
+html: '<div class="marcador">🍾</div>',
+iconSize: [40, 40],
+iconAnchor: [20, 35]
 });
+
+var iconoBotellaCercana = L.divIcon({
+className: '',
+html: '<div class="marcador titilando">🍾</div>',
+iconSize: [50, 50],
+iconAnchor: [25, 40]
+});
+
+var iconoBorracho = L.divIcon({
+className: '',
+html: '<div class="marcador marcador-borracho">🥴</div>',
+iconSize: [45, 45],
+iconAnchor: [22, 40]
+});
+
+var marcadores = [];
+tiendas.forEach((t, i)=>{
+var m = L.marker([t.lat,t.lng], {icon: iconoBotella}).addTo(map).bindPopup("🍾 <b>"+t.nombre+"</b><br>"+t.zona);
+marcadores.push(m);
+});
+
 function distKm(lat1,lng1,lat2,lng2){
 const R=6371;
 const dLat=(lat2-lat1)*Math.PI/180;
@@ -58,14 +92,19 @@ const dLng=(lng2-lng1)*Math.PI/180;
 const a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)*Math.sin(dLng/2);
 return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
+
 function mostrarCercana(lat,lng){
-let mejor=tiendas[0], mejorD=9999;
-tiendas.forEach(t=>{let d=distKm(lat,lng,t.lat,t.lng); if(d<mejorD){mejorD=d; mejor=t;}});
+let mejorIndex = 0, mejorD = 9999, mejor = tiendas[0];
+tiendas.forEach((t, i)=>{let d=distKm(lat,lng,t.lat,t.lng); if(d<mejorD){mejorD=d; mejor=t; mejorIndex=i;}});
 document.getElementById('cercaTexto').innerText = mejor.nombre + " - " + mejor.zona + " (" + mejorD.toFixed(1) + " km)";
 document.getElementById('comoLlegar').href = 'https://www.google.com/maps/dir/?api=1&destination='+mejor.lat+','+mejor.lng;
+marcadores.forEach((m, i)=>{
+if(i === mejorIndex){ m.setIcon(iconoBotellaCercana); } else { m.setIcon(iconoBotella); }
+});
 map.setView([lat,lng],13);
-L.marker([lat,lng]).addTo(map).bindPopup("📍 Tú estás aquí").openPopup();
+L.marker([lat,lng], {icon: iconoBorracho}).addTo(map).bindPopup("🥴 Tú estás aquí").openPopup();
 }
+
 if(navigator.geolocation){
 navigator.geolocation.getCurrentPosition(p=>mostrarCercana(p.coords.latitude,p.coords.longitude), ()=>mostrarCercana(18.519,-70.023), {enableHighAccuracy:true});
 } else {
