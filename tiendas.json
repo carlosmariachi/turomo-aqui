@@ -15,5 +15,22 @@
       "dom_cierra": 24
     },
     "bebidas": ["Romo", "Cerveza", "Vino"]
+  },
+  {
+    "name": "El Punto Liquor Store",
+    "zona": "San Isidro, Santo Domingo Este",
+    "lat": 18.485748,
+    "lng": -69.843905,
+    "tel": "8095962640",
+    "hora": "Todos los días 9:30 AM - 12:05 AM",
+    "horario": {
+      "lun_vie_abre": 9.5,
+      "lun_vie_cierra": 24.05,
+      "sab_abre": 9.5,
+      "sab_cierra": 24.05,
+      "dom_abre": 9.5,
+      "dom_cierra": 24.05
+    },
+    "bebidas": ["Romo", "Cerveza", "Vino"]
   }
 ]
