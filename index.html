@@ -35,7 +35,7 @@ header img{width:80px;height:80px;border-radius:50%;object-fit:cover;margin-top:
 </header>
 <div class="banner">
 <h2>⭐ TU LICORERÍA MÁS CERCANA</h2>
-<p id="cercaTexto">Buscando tu ubicación...</p>
+<p id="cercaTexto">Cargando...</p>
 <p class="abierto" id="horarioTexto">🟢 Buscando horario...</p>
 <a id="comoLlegar" href="#" target="_blank">📍 CÓMO LLEGAR</a>
 <button class="btn-ubicacion" onclick="pedirUbicacion()">📍 USAR MI UBICACIÓN</button>
@@ -55,13 +55,18 @@ function distKm(lat1,lng1,lat2,lng2){
   const a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)*Math.sin(dLng/2);
   return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
-// AHORA SI LEE TU FORMATO: nombre, zona, lat, lng, horario, telefono
+// TUS 3 TIENDAS DE RESPALDO - YA ESTAN ADENTRO, NO DEPENDEN DE tiendas.json
+var TIENDAS_RESPALDO = [
+  {nombre:"El Punto Liquor Store", zona:"Aut. San Isidro, Santo Domingo Este - Frente Hotel Golden House", lat:18.485748, lng:-69.843905, horario:"ABIERTO - Cierra 12:05 a.m. | Abre 9:30 a.m.", telefono:"809-596-2640"},
+  {nombre:"On Time Liquor Store - Charles de Gaulle", zona:"Av. Charles de Gaulle, al lado de Shell, Santo Domingo Este", lat:18.492535, lng:-69.824343, horario:"Abierto - Cierra a las 12 a.m.", telefono:"809-576-7665"},
+  {nombre:"Mega Drinks - San Vicente", zona:"Av. San Vicente de Paúl 2-328, Santo Domingo Este", lat:18.494181, lng:-69.851282, horario:"Abierto - Cierra a las 11 p.m.", telefono:"809-594-7778"}
+];
 function normalizar(t){
   return {
     nombre: t.nombre || 'Licorería',
     lat: parseFloat(t.lat),
     lng: parseFloat(t.lng),
-    direccion: t.zona || t.direccion || t.address || '',
+    direccion: t.zona || t.direccion || '',
     horario: t.horario || 'Ver horario en tienda',
     telefono: t.telefono || ''
   };
@@ -69,10 +74,20 @@ function normalizar(t){
 var tiendas = [];
 var marcadores = [];
 var miUbicacion = null;
+function dibujarTiendas(){
+  marcadores.forEach(m=>map.removeLayer(m));
+  marcadores = [];
+  tiendas.forEach((ti)=>{
+    var m = L.marker([ti.lat,ti.lng], {icon: iconoBotella}).addTo(map);
+    m.bindPopup('<b>'+ti.nombre+'</b><br>'+ti.direccion+'<br>'+ti.horario+'<br>'+ti.telefono);
+    marcadores.push(m);
+  });
+}
 function mostrarCercana(lat,lng){
   if(!tiendas || tiendas.length===0){
-    document.getElementById('cercaTexto').innerText = 'Cargando tiendas...';
-    return;
+    // SI NO HAY TIENDAS, USA LAS DE RESPALDO DE UNA VEZ
+    tiendas = TIENDAS_RESPALDO.map(normalizar);
+    dibujarTiendas();
   }
   let mejorIndex=0, mejorD=9999, mejor=tiendas[0];
   tiendas.forEach((t,i)=>{
@@ -82,7 +97,7 @@ function mostrarCercana(lat,lng){
   document.getElementById('cercaTexto').innerText = 'La más cerca: ' + mejor.nombre + ' - a ' + mejorD.toFixed(2) + ' km - ' + mejor.direccion;
   document.getElementById('horarioTexto').innerText = mejor.horario + (mejor.telefono ? ' | 📞 ' + mejor.telefono : '');
   document.getElementById('comoLlegar').href = 'https://www.google.com/maps/dir/?api=1&destination=' + mejor.lat + ',' + mejor.lng;
-  marcadores.forEach((m,i)=>{ 
+  marcadores.forEach((m,i)=>{
     if(i===mejorIndex){ m.setIcon(iconoBotellaCercana); } else { m.setIcon(iconoBotella); }
   });
   map.setView([lat,lng],13);
@@ -103,17 +118,20 @@ function pedirUbicacion(){
     if(texto.includes('Buscando')){ mostrarCercana(18.49,-69.86); }
   }, 6000);
 }
+// 1. Primero muestra las de respaldo para que NUNCA se quede en "Cargando"
+tiendas = TIENDAS_RESPALDO.map(normalizar);
+dibujarTiendas();
+pedirUbicacion();
+// 2. Después intenta cargar tu tiendas.json por si agregaste más tiendas
 fetch('tiendas.json').then(r=>r.json()).then(datos=>{
-  tiendas = datos.map(normalizar).filter(t=>!isNaN(t.lat) && !isNaN(t.lng));
-  tiendas.forEach((ti)=>{
-    var m = L.marker([ti.lat,ti.lng], {icon: iconoBotella}).addTo(map);
-    m.bindPopup('<b>'+ti.nombre+'</b><br>'+ti.direccion+'<br>'+ti.horario+'<br>'+ti.telefono);
-    marcadores.push(m);
-  });
-  pedirUbicacion();
-}).catch(()=>{
-  document.getElementById('cercaTexto').innerText = 'No se pudieron cargar las tiendas';
-});
+  if(Array.isArray(datos) && datos.length>0){
+    tiendas = datos.map(normalizar).filter(t=>!isNaN(t.lat) && !isNaN(t.lng));
+    if(tiendas.length>0){
+      dibujarTiendas();
+      pedirUbicacion();
+    }
+  }
+}).catch(()=>{});
 </script>
 </body>
 </html>
