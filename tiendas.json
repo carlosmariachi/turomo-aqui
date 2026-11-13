@@ -11,7 +11,7 @@
   "nombre": "On Time Liquor Store - Charles de Gaulle",
   "lat": 18.5425,
   "lng": -69.8658,
-  "direccion": "Av. Charles de Gaulle, al lado de Shell, Santo Domingo Este",
+  "zona": "Av. Charles de Gaulle, al lado de Shell, Santo Domingo Este",
   "horario": "Abierto · Cierra a las 12 a.m.",
   "telefono": "",
   "tipo": "liquor"
@@ -20,7 +20,7 @@
     "nombre": "Mega Drinks - San Vicente",
     "lat": 18.494181,
     "lng": -69.851282,
-    "direccion": "Av. San Vicente de Paúl 2-328, Santo Domingo Este",
+    "zona": "Av. San Vicente de Paúl 2-328, Santo Domingo Este",
     "horario": "Abierto · Cierra a las 11 p.m.",
     "telefono": "809-594-7778",
     "tipo": "liquor"
