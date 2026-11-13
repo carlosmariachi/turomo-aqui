@@ -1,158 +1,47 @@
->
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tu Romo Aquí</title>
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#ff6b00">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-* { margin:0; padding:0; box-sizing:border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-body { background:#f5f5f5; overflow:hidden; height:100vh; display:flex; flex-direction:column; }
-header { background:#ff6b00; color:white; padding:14px 14px 10px; flex-shrink:0; }
-header h1 { font-size:22px; line-height:1; }
-header p { font-size:12px; opacity:0.9; margin-top:3px; }
-#buscador { width:100%; padding:11px 14px; border:none; border-radius:20px; font-size:15px; margin-top:10px; outline:none; }
-#filtros { display:flex; gap:6px; margin-top:10px; overflow-x:auto; padding-bottom:2px; }
-#filtros button { border:none; padding:7px 14px; border-radius:20px; font-size:13px; font-weight:700; white-space:nowrap; cursor:pointer; background:white; color:#333; }
-#filtros button.activo { background:#222; color:white; }
-#masCercana { background:#00c853; color:white; text-align:center; padding:12px 10px; flex-shrink:0; }
-#masCercana h2 { font-size:16px; }
-#masCercana p { font-size:13px; margin:4px 0; }
-#masCercana .estado { font-weight:800; font-size:14px; }
-#btnLlegar { background:white; color:#111; border:none; padding:10px 22px; border-radius:25px; font-weight:800; font-size:14px; margin-top:6px; cursor:pointer; }
-#map { flex:1; width:100%; z-index:1; }
-.bottle-icon { font-size:32px; text-align:center; line-height:1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4)); }
-.bottle-cercana { font-size:42px; animation: parpadea 1s infinite; }
-@keyframes parpadea { 0%,100%{ transform:scale(1);} 50%{ transform:scale(1.25);} }
-.user-icon { font-size:32px; text-align:center; }
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,sans-serif;background:#f5f5f5}
+header{background:#ff6b00;color:white;padding:15px;text-align:center}
+header h1{font-size:22px}
+header p{font-size:13px;opacity:.9}
+#buscador{width:90%;padding:12px;margin:12px auto;display:block;border-radius:10px;border:1px solid #ddd;font-size:15px}
+#lista{padding:0 12px 20px}
+.tienda{background:white;padding:14px;border-radius:12px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.tienda h3{font-size:17px}
+.tienda p{font-size:13px;color:#555;margin-top:4px}
+.tienda a{display:inline-block;margin-top:8px;background:#00c853;color:white;padding:8px 14px;border-radius:20px;text-decoration:none;font-weight:bold;font-size:14px}
 </style>
 </head>
 <body>
-
 <header>
-  <h1>🍾 Tu Romo Aquí</h1>
-  <p>📍 Licorerías cerca de ti en Santo Domingo</p>
-  <input id="buscador" placeholder="🔍 Buscar tienda, zona..." />
-  <div id="filtros">
-    <button class="activo" data-f="Todos">Todos</button>
-    <button data-f="Romo">Romo</button>
-    <button data-f="Cerveza">Cerveza</button>
-    <button data-f="Vino">Vino</button>
-    <button data-f="Cercana">📍 Más Cercana</button>
-  </div>
+<h1>🥃 Tu Romo Aquí</h1>
+<p>Licorerías cerca de ti en Santo Domingo</p>
 </header>
-
-<div id="masCercana">
-  <h2>⭐ TU LICORERÍA MÁS CERCANA</h2>
-  <p id="textoCercana">Buscando tu ubicación...</p>
-  <p class="estado" id="estadoCercana"></p>
-  <button id="btnLlegar" style="display:none;">🧭 Cómo llegar</button>
-</div>
-
-<div id="map"></div>
-
+<input id="buscador" placeholder="Buscar licorería...">
+<div id="lista"></div>
 <script>
-let map = L.map('map').setView([18.4857, -69.8439], 13);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
-
-let tiendas = [];
-let marcadores = [];
-let userLat = null, userLng = null, userMarker = null;
-let tiendaCercana = null;
-let filtroActual = "Todos";
-
-function distancia(lat1, lon1, lat2, lon2) {
-  let R = 6371;
-  let dLat = (lat2-lat1)*Math.PI/180;
-  let dLon = (lon2-lon1)*Math.PI/180;
-  let a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-}
-
-function estaAbierta(t) {
-  let ahora = new Date();
-  let dia = ahora.getDay();
-  let hora = ahora.getHours() + ahora.getMinutes()/60;
-  let abre, cierra;
-  if (dia >= 1 && dia <= 5) { abre = t.horario.lun_vie_abre; cierra = t.horario.lun_vie_cierra; }
-  else if (dia === 6) { abre = t.horario.sab_abre; cierra = t.horario.sab_cierra; }
-  else { abre = t.horario.dom_abre; cierra = t.horario.dom_cierra; }
-  if (cierra >= 24) cierra = 23.99;
-  if (cierra < abre) return hora >= abre || hora < cierra;
-  return hora >= abre && hora < cierra;
-}
-
-function mostrarTiendas() {
-  marcadores.forEach(m => map.removeLayer(m));
-  marcadores = [];
-  let lista = tiendas.filter(t => {
-    if (filtroActual === "Todos" || filtroActual === "Cercana") return true;
-    return t.bebidas.includes(filtroActual);
-  });
-  // Si busca por texto
-  let texto = document.getElementById('buscador').value.toLowerCase();
-  if (texto) lista = lista.filter(t => (t.name + " " + t.zona).toLowerCase().includes(texto));
-
-  lista.forEach(t => {
-    let esCercana = tiendaCercana && tiendaCercana.name === t.name;
-    let icono = L.divIcon({ className:'', html:`<div class="bottle-icon ${esCercana?'bottle-cercana':''}">🍾</div>`, iconSize:[40,40], iconAnchor:[20,20] });
-    let abierta = estaAbierta(t);
-    let m = L.marker([t.lat, t.lng], {icon: icono}).addTo(map);
-    m.bindPopup(`<b>${t.name}</b><br>${t.zona}<br>${abierta ? '🟢 ABIERTA AHORA' : '🔴 CERRADA AHORA'}<br>${t.hora}<br><a href="tel:${t.tel}">📞 ${t.tel}</a><br><a href="https://www.google.com/maps/dir/?api=1&destination=${t.lat},${t.lng}" target="_blank">🧭 Cómo llegar</a>`);
-    marcadores.push(m);
-  });
-  if (filtroActual === "Cercana" && tiendaCercana) {
-    map.setView([tiendaCercana.lat, tiendaCercana.lng], 15);
-  }
-}
-
-function actualizarCercana() {
-  if (!userLat || tiendas.length === 0) return;
-  let mejor = null, mejorDist = 9999;
-  tiendas.forEach(t => {
-    let d = distancia(userLat, userLng, t.lat, t.lng);
-    t.dist = d;
-    if (d < mejorDist) { mejorDist = d; mejor = t; }
-  });
-  tiendaCercana = mejor;
-  let abierta = estaAbierta(mejor);
-  document.getElementById('textoCercana').textContent = `${mejor.name} - a ${mejorDist.toFixed(1)} km - ${mejor.zona}`;
-  document.getElementById('estadoCercana').textContent = `${abierta ? '🟢 ABIERTA AHORA' : '🔴 CERRADA AHORA'} - ${mejor.hora}`;
-  let btn = document.getElementById('btnLlegar');
-  btn.style.display = 'inline-block';
-  btn.onclick = () => window.open(`https://www.google.com/maps/dir/?api=1&destination=${mejor.lat},${mejor.lng}`, '_blank');
-  mostrarTiendas();
-}
-
-fetch('tiendas.json').then(r => r.json()).then(data => {
-  tiendas = data;
-  if (navigator.geolocation) {
-    navigator.geolocation.watchPosition(pos => {
-      userLat = pos.coords.latitude; userLng = pos.coords.longitude;
-      if (!userMarker) {
-        let iconoUser = L.divIcon({ className:'', html:`<div class="user-icon">🥴</div>`, iconSize:[40,40], iconAnchor:[20,20] });
-        userMarker = L.marker([userLat, userLng], {icon: iconoUser}).addTo(map).bindPopup("Tú estás aquí");
-        map.setView([userLat, userLng], 14);
-      } else { userMarker.setLatLng([userLat, userLng]); }
-      actualizarCercana();
-    }, () => { actualizarCercana(); }, { enableHighAccuracy:true });
-  } else { actualizarCercana(); }
-  mostrarTiendas();
+const tiendas=[
+{name:"Licorería El Primo", zona:"Los Alcarrizos", tel:"809-555-0101"},
+{name:"Super Colmado La Fe", zona:"Santo Domingo Norte", tel:"809-555-0102"},
+{name:"Licor Store Central", zona:"Santo Domingo Este", tel:"809-555-0103"},
+{name:"Colmado El Brindis", zona:"Villa Mella", tel:"809-555-0104"}
+];
+const lista=document.getElementById('lista');
+const buscador=document.getElementById('buscador');
+function mostrar(filtro=""){
+lista.innerHTML="";
+tiendas.filter(t=>t.name.toLowerCase().includes(filtro.toLowerCase())||t.zona.toLowerCase().includes(filtro.toLowerCase())).forEach(t=>{
+lista.innerHTML+=`<div class="tienda"><h3>🥃 ${t.name}</h3><p>📍 ${t.zona}</p><p>📞 ${t.tel}</p><a href="tel:${t.tel}">Llamar</a></div>`;
 });
-
-document.getElementById('buscador').addEventListener('input', mostrarTiendas);
-document.querySelectorAll('#filtros button').forEach(b => {
-  b.onclick = () => {
-    document.querySelectorAll('#filtros button').forEach(x => x.classList.remove('activo'));
-    b.classList.add('activo');
-    filtroActual = b.dataset.f;
-    mostrarTiendas();
-  };
-});
+}
+buscador.addEventListener('input',e=>mostrar(e.target.value));
+mostrar();
 </script>
 </body>
-</html
+</html>
