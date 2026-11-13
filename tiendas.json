@@ -1,11 +1,19 @@
 [
   {
     "name": "El Punto Licor Es Todo",
-    "zona": "Autopista San Isidro, frente a la Toyota, Santo Domingo Este",
-    "lat": 18.4905,
-    "lng": -69.8235,
+    "zona": "Santo Domingo Norte",
+    "lat": 18.582151,
+    "lng": -69.912527,
     "tel": "8298877310",
     "hora": "Lun-Vie 8:00 AM - 10:30 PM, Sáb 8:00 AM - 2:00 AM, Dom 8:00 AM - 12:00 AM",
+    "horario": {
+      "lun_vie_abre": 8,
+      "lun_vie_cierra": 22.5,
+      "sab_abre": 8,
+      "sab_cierra": 26,
+      "dom_abre": 8,
+      "dom_cierra": 24
+    },
     "bebidas": ["Romo", "Cerveza", "Vino"]
   }
 ]
