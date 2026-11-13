@@ -45,11 +45,9 @@ header img{width:80px;height:80px;border-radius:50%;object-fit:cover;margin-top:
 <script>
 var map = L.map('map').setView([18.49,-69.86],13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
-
 var iconoBotella = L.divIcon({className:'', html:'<div class="marcador">🍾</div>', iconSize:[32,32]});
 var iconoBotellaCercana = L.divIcon({className:'', html:'<div class="marcador titilando">🍾</div>', iconSize:[32,32]});
 var iconoBorracho = L.divIcon({className:'', html:'<div class="marcador-borracho">🥴</div>', iconSize:[38,38]});
-
 function distKm(lat1,lng1,lat2,lng2){
   const R=6371;
   const dLat=(lat2-lat1)*Math.PI/180;
@@ -57,23 +55,20 @@ function distKm(lat1,lng1,lat2,lng2){
   const a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)*Math.sin(dLng/2);
   return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
-
-// ESTO ES LO QUE PROTEGE TUS DIRECCIONES:
-// Lee tu tiendas.json como sea que lo escribiste
+// AHORA SI LEE TU FORMATO: nombre, zona, lat, lng, horario, telefono
 function normalizar(t){
   return {
-    nombre: t.nombre || t.name || t.tienda || t.titulo || 'Licorería',
-    lat: parseFloat(t.lat ?? t.latitud ?? t.latitude ?? t.Latitud),
-    lng: parseFloat(t.lng ?? t.lon ?? t.longitud ?? t.longitude ?? t.lngitud),
-    direccion: t.direccion || t.address || t.ubicacion || t.dir || '',
-    horario: t.horario || t.hora || t.horas || 'Ver horario en tienda'
+    nombre: t.nombre || 'Licorería',
+    lat: parseFloat(t.lat),
+    lng: parseFloat(t.lng),
+    direccion: t.zona || t.direccion || t.address || '',
+    horario: t.horario || 'Ver horario en tienda',
+    telefono: t.telefono || ''
   };
 }
-
 var tiendas = [];
 var marcadores = [];
 var miUbicacion = null;
-
 function mostrarCercana(lat,lng){
   if(!tiendas || tiendas.length===0){
     document.getElementById('cercaTexto').innerText = 'Cargando tiendas...';
@@ -84,8 +79,8 @@ function mostrarCercana(lat,lng){
     let d=distKm(lat,lng,t.lat,t.lng);
     if(d<mejorD){mejorD=d;mejorIndex=i;mejor=t;}
   });
-  document.getElementById('cercaTexto').innerText = 'La más cerca: ' + mejor.nombre + ' - a ' + mejorD.toFixed(2) + ' km' + (mejor.direccion ? ' - ' + mejor.direccion : '');
-  document.getElementById('horarioTexto').innerText = '🟢 Abierto - ' + mejor.horario;
+  document.getElementById('cercaTexto').innerText = 'La más cerca: ' + mejor.nombre + ' - a ' + mejorD.toFixed(2) + ' km - ' + mejor.direccion;
+  document.getElementById('horarioTexto').innerText = mejor.horario + (mejor.telefono ? ' | 📞 ' + mejor.telefono : '');
   document.getElementById('comoLlegar').href = 'https://www.google.com/maps/dir/?api=1&destination=' + mejor.lat + ',' + mejor.lng;
   marcadores.forEach((m,i)=>{ 
     if(i===mejorIndex){ m.setIcon(iconoBotellaCercana); } else { m.setIcon(iconoBotella); }
@@ -94,7 +89,6 @@ function mostrarCercana(lat,lng){
   if(miUbicacion){ map.removeLayer(miUbicacion); }
   miUbicacion = L.marker([lat,lng], {icon: iconoBorracho}).addTo(map);
 }
-
 function pedirUbicacion(){
   document.getElementById('cercaTexto').innerText = 'Buscando tu ubicación...';
   if(navigator.geolocation){
@@ -103,25 +97,17 @@ function pedirUbicacion(){
       ()=>mostrarCercana(18.49,-69.86),
       {timeout:5000, maximumAge:60000}
     );
-  } else {
-    mostrarCercana(18.49,-69.86);
-  }
+  } else { mostrarCercana(18.49,-69.86); }
   setTimeout(()=>{
     let texto = document.getElementById('cercaTexto').innerText;
-    if(texto.includes('Buscando') || texto.includes('Cargando')){
-      mostrarCercana(18.49,-69.86);
-    }
+    if(texto.includes('Buscando')){ mostrarCercana(18.49,-69.86); }
   }, 6000);
 }
-
-// Carga tu tiendas.json SIN MODIFICARLO
 fetch('tiendas.json').then(r=>r.json()).then(datos=>{
-  // Si es un array directo o si viene dentro de un objeto
-  let lista = Array.isArray(datos) ? datos : (datos.tiendas || datos.data || []);
-  tiendas = lista.map(normalizar).filter(t=>!isNaN(t.lat) && !isNaN(t.lng));
+  tiendas = datos.map(normalizar).filter(t=>!isNaN(t.lat) && !isNaN(t.lng));
   tiendas.forEach((ti)=>{
     var m = L.marker([ti.lat,ti.lng], {icon: iconoBotella}).addTo(map);
-    m.bindPopup('<b>'+ti.nombre+'</b><br>'+(ti.direccion||'')+'<br>'+ti.horario);
+    m.bindPopup('<b>'+ti.nombre+'</b><br>'+ti.direccion+'<br>'+ti.horario+'<br>'+ti.telefono);
     marcadores.push(m);
   });
   pedirUbicacion();
