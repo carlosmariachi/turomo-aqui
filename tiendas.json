@@ -26,12 +26,4 @@
     "tipo": "liquor"
   },
   {
-  "nombre": "Drinks 2 Go Av. Tiradentes",
-  "zona": "Naco, Santo Domingo",
-  "lat": 18.472714,
-  "lng": -69.92583,
-  "horario": "9:00 AM - 12:00 AM",
-  "telefono": "809-987-1313",
-  "tipo": "liquor store"
-},
   ]
