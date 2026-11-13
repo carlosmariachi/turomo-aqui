@@ -33,4 +33,23 @@
     },
     "bebidas": ["Romo", "Cerveza", "Vino"]
   }
+
+,
+{
+  "name": "Mega Drinks - San Vicente",
+  "zona": "Alma Rosa I, Santo Domingo Este",
+  "lat": 18.494181,
+  "lng": -69.851282,
+  "tel": "8095947778",
+  "hora": "Todos los días 9:00 AM - 11:00 PM",
+  "horario": {
+    "lun_vie_abre": 9,
+    "lun_vie_cierra": 23,
+    "sab_abre": 9,
+    "sab_cierra": 23,
+    "dom_abre": 9,
+    "dom_cierra": 23
+  },
+  "bebidas": ["Romo", "Cerveza", "Vino"]
+}
 ]
