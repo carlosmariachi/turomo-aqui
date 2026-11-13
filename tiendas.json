@@ -7,5 +7,15 @@
     "tel": "8095550101",
     "hora": "Lun - Dom 9am a 11pm",
     "bebidas": ["Romo", "Cerveza", "Vino"]
+  },
+  ,
+  {
+    "name": "Nombre de la licorería nueva",
+    "zona": "Barrio, Calle",
+    "lat": 18.4728,
+    "lng": -69.9335,
+    "tel": "8090000000",
+    "hora": "Lun - Dom 9am a 11pm",
+    "bebidas": ["Romo", "Cerveza", "Vino"]
   }
 ]
