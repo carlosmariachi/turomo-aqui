@@ -4,48 +4,87 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tu Romo Aquí</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Arial,sans-serif;background:#0a0a0a;color:white}
-header{background:#000;color:white;padding:20px 15px;text-align:center;border-bottom:2px solid #ff6b00;position:relative;overflow:hidden}
-header .aguila{font-size:65px;display:block}
-header h1{font-size:26px;margin-top:5px}
-header h1 span{color:#ff6b00}
-header p{font-size:13px;opacity:.8;margin-top:4px}
-#buscador{width:90%;padding:12px;margin:14px auto;display:block;border-radius:10px;border:1px solid #333;background:#1a1a1a;color:white;font-size:15px}
-#lista{padding:0 12px 20px}
-.tienda{background:#1a1a1a;padding:14px;border-radius:12px;margin-bottom:10px;border:1px solid #2a2a2a}
-.tienda h3{font-size:17px;color:white}
-.tienda p{font-size:13px;color:#aaa;margin-top:4px}
-.tienda a{display:inline-block;margin-top:8px;background:#ff6b00;color:white;padding:8px 14px;border-radius:20px;text-decoration:none;font-weight:bold;font-size:14px}
-.verde{background:#00c853 !important}
+body{font-family:Arial,sans-serif;background:#f5f5f5}
+header{background:#ff6b00;color:white;padding:15px;display:flex;justify-content:space-between;align-items:center}
+header h1{font-size:22px}
+header p{font-size:12px}
+header .buitre{font-size:55px;line-height:1;text-align:center}
+#buscador{width:90%;padding:12px;margin:12px auto;display:block;border-radius:20px;border:1px solid #ddd;font-size:14px}
+.filtros{display:flex;gap:8px;padding:0 12px 10px}
+.filtros button{padding:7px 14px;border-radius:20px;border:1px solid #ddd;background:white;font-weight:bold}
+.filtros button.activo{background:#000;color:white}
+.banner{background:#00c853;color:white;text-align:center;padding:14px 12px}
+.banner h2{font-size:15px}
+.banner p{font-size:13px;margin:6px 0}
+.banner .abierto{font-weight:bold;font-size:13px}
+.banner a{display:inline-block;margin-top:10px;background:white;color:#000;padding:8px 18px;border-radius:20px;text-decoration:none;font-weight:bold;font-size:14px}
+#map{height:420px;width:100%}
 </style>
 </head>
 <body>
 <header>
-<span class="aguila">🦅</span>
-<h1>Tu <span>Romo</span> Aquí</h1>
-<p>Licorerías cerca de ti en Santo Domingo</p>
+<div>
+<h1>🍾 Tu Romo Aquí</h1>
+<p>📍 Licorerías cerca de ti en Santo Domingo</p>
+</div>
+<div class="buitre">🦅</div>
 </header>
+
 <input id="buscador" placeholder="🔍 Buscar licorería...">
-<div id="lista"></div>
+<div class="filtros">
+<button class="activo">Todo</button>
+<button>Romo</button>
+<button>Cerveza</button>
+</div>
+
+<div class="banner">
+<h2>⭐ TU LICORERÍA MÁS CERCANA</h2>
+<p id="cercaTexto">Buscando tu ubicación...</p>
+<p class="abierto">🟢 ABIERTA AHORA - Todos los días 9:00 AM - 11:00 PM</p>
+<a id="comoLlegar" href="#" target="_blank">🧭 Cómo llegar</a>
+</div>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const tiendas=[
-{name:"Licorería El Primo", zona:"Los Alcarrizos", tel:"809-555-0101"},
-{name:"Super Colmado La Fe", zona:"Santo Domingo Norte", tel:"809-555-0102"},
-{name:"Licor Store Central", zona:"Santo Domingo Este", tel:"809-555-0103"},
-{name:"Colmado El Brindis", zona:"Villa Mella", tel:"809-555-0104"}
+{name:"Mega Drinks", zona:"San Vicente - Alma Rosa I, Santo Domingo Este", lat:18.488, lng:-69.860, tel:"809-555-0101"},
+{name:"Licorería El Primo", zona:"Los Alcarrizos", lat:18.519, lng:-70.023, tel:"809-555-0102"},
+{name:"Super Colmado La Fe", zona:"Santo Domingo Norte", lat:18.540, lng:-69.910, tel:"809-555-0103"},
+{name:"Licor Store Central", zona:"Santo Domingo Este", lat:18.490, lng:-69.850, tel:"809-555-0104"}
 ];
-const lista=document.getElementById('lista');
-const buscador=document.getElementById('buscador');
-function mostrar(filtro=""){
-lista.innerHTML="";
-tiendas.filter(t=>t.name.toLowerCase().includes(filtro.toLowerCase())||t.zona.toLowerCase().includes(filtro.toLowerCase())).forEach(t=>{
-lista.innerHTML+=`<div class="tienda"><h3>🦅 ${t.name}</h3><p>📍 ${t.zona}</p><p>📞 ${t.tel}</p><a href="tel:${t.tel}">Llamar</a></div>`;
+let map = L.map('map').setView([18.50, -69.95], 12);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
+tiendas.forEach(t=>{
+  L.marker([t.lat,t.lng]).addTo(map).bindPopup(`<b>${t.name}</b><br>${t.zona}<br>${t.tel}`);
 });
+function distKm(lat1,lon1,lat2,lon2){
+  const R=6371, dLat=(lat2-lat1)*Math.PI/180, dLon=(lon2-lon1)*Math.PI/180;
+  const a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
-buscador.addEventListener('input',e=>mostrar(e.target.value));
-mostrar();
+function mostrarCercana(lat,lng){
+  let mejor=tiendas[0], mejorD=9999;
+  tiendas.forEach(t=>{let d=distKm(lat,lng,t.lat,t.lng); if(d<mejorD){mejorD=d; mejor=t;}});
+  document.getElementById('cercaTexto').innerText = `${mejor.name} - a ${mejorD.toFixed(1)} km - ${mejor.zona}`;
+  document.getElementById('comoLlegar').href = `https://www.google.com/maps/dir/?api=1&destination=${mejor.lat},${mejor.lng}`;
+  map.setView([lat,lng],13);
+  L.marker([lat,lng]).addTo(map).bindPopup("📍 Tú estás aquí").openPopup();
+}
+if(navigator.geolocation){
+  navigator.geolocation.getCurrentPosition(p=>mostrarCercana(p.coords.latitude,p.coords.longitude),
+  ()=>mostrarCercana(18.519,-70.023),{enableHighAccuracy:true});
+} else { mostrarCercana(18.519,-70.023); }
+document.querySelectorAll('.filtros button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.filtros button').forEach(x=>x.classList.remove('activo'));
+    b.classList.add('activo');
+  });
+});
 </script>
 </body>
 </html>
