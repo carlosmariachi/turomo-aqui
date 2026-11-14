@@ -25,4 +25,12 @@
     "telefono": "809-594-7778",
     "tipo": "liquor"
   },
+  {
+  "nombre": "Super Edwin Market",
+  "zona": "Av. Sabana Larga, Santo Domingo Este - Frente a Casa Vinicio, Cerca de Ensanche Ozama",
+  "lat": 18.4903147,
+  "lng": -69.8654499,
+  "horario": "ABIERTO - 24 Horas",
+  "telefono": "809-432-7345",
+  },
   ]
