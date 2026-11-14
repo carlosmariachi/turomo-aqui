@@ -60,5 +60,14 @@
   "horario": "Abierto · Cierra a las 12 a.m.",
   "telefono": "809-463-8283",
   "tipo": "liquor"
+},
+  {
+  "nombre": "Drinks 2 Go Independencia",
+  "zona": "Av. Independencia, Esq. 2da, Jardines del Mirador km 7 1/2",
+  "lat": 18.4400719,
+  "lng": -69.9471178,
+  "horario": "Abierto · Cierra a las 12 a.m.",
+  "telefono": "809-987-1313",
+  "tipo": "liquor"
 }
-  ]
+]
