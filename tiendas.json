@@ -60,5 +60,14 @@
   "horario": "Abierto · Cierra a las 12 a.m.",
   "telefono": "809-000-0000",
   "tipo": "liquor"
+},
+{
+  "nombre": "Drinks 2 Go Av. Winston Churchill",
+  "zona": "Plaza New Orleans, Av. Winston Churchill, Santo Domingo",
+  "lat": 18.476929,
+  "lng": -69.944418,
+  "horario": "Abierto · Cierra a las 12 a.m.",
+  "telefono": "809-987-1313",
+  "tipo": "liquor"
 }
   ]
