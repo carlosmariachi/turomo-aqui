@@ -22,6 +22,7 @@ header img{width:80px;height:80px;border-radius:50%;object-fit:cover;margin-top:
 .marcador-borracho{font-size:38px}
 .titilando{animation:titila 1s infinite}
 @keyframes titila{0%{transform:scale(1);opacity:1}50%{transform:scale(1.2);opacity:0.7}100%{transform:scale(1);opacity:1}}
+.seleccionada{animation:titila 0.7s infinite; filter: drop-shadow(0 0 8px yellow);}
 .btn-ubicacion{background:#ff6b00;color:white;border:none;padding:10px 15px;border-radius:20px;font-weight:bold;margin-top:8px;width:100%;font-size:14px}
 </style>
 </head>
@@ -34,8 +35,8 @@ header img{width:80px;height:80px;border-radius:50%;object-fit:cover;margin-top:
 </div>
 </header>
 <div class="banner">
-<h2>⭐ TU LICORERÍA MÁS CERCANA</h2>
-<p id="cercaTexto">Cargando...</p>
+<h2 id="tituloBanner">⭐ TU LICORERÍA MÁS CERCANA</h2>
+<p id="cercaTexto">Buscando tu ubicación...</p>
 <p class="abierto" id="horarioTexto">🟢 Buscando horario...</p>
 <a id="comoLlegar" href="#" target="_blank">📍 CÓMO LLEGAR</a>
 <button class="btn-ubicacion" onclick="pedirUbicacion()">📍 USAR MI UBICACIÓN</button>
@@ -47,6 +48,7 @@ var map = L.map('map').setView([18.49,-69.86],13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
 var iconoBotella = L.divIcon({className:'', html:'<div class="marcador">🍾</div>', iconSize:[32,32]});
 var iconoBotellaCercana = L.divIcon({className:'', html:'<div class="marcador titilando">🍾</div>', iconSize:[32,32]});
+var iconoSeleccionada = L.divIcon({className:'', html:'<div class="marcador seleccionada">🍾</div>', iconSize:[32,32]});
 var iconoBorracho = L.divIcon({className:'', html:'<div class="marcador-borracho">🥴</div>', iconSize:[38,38]});
 function distKm(lat1,lng1,lat2,lng2){
   const R=6371;
@@ -55,49 +57,50 @@ function distKm(lat1,lng1,lat2,lng2){
   const a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)*Math.sin(dLng/2);
   return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
-// TUS 3 TIENDAS DE RESPALDO - YA ESTAN ADENTRO, NO DEPENDEN DE tiendas.json
-var TIENDAS_RESPALDO = [
-  {nombre:"El Punto Liquor Store", zona:"Aut. San Isidro, Santo Domingo Este - Frente Hotel Golden House", lat:18.485748, lng:-69.843905, horario:"ABIERTO - Cierra 12:05 a.m. | Abre 9:30 a.m.", telefono:"809-596-2640"},
-  {nombre:"On Time Liquor Store - Charles de Gaulle", zona:"Av. Charles de Gaulle, al lado de Shell, Santo Domingo Este", lat:18.492535, lng:-69.824343, horario:"Abierto - Cierra a las 12 a.m.", telefono:"809-576-7665"},
-  {nombre:"Mega Drinks - San Vicente", zona:"Av. San Vicente de Paúl 2-328, Santo Domingo Este", lat:18.494181, lng:-69.851282, horario:"Abierto - Cierra a las 11 p.m.", telefono:"809-594-7778"}
-];
 function normalizar(t){
   return {
-    nombre: t.nombre || 'Licorería',
-    lat: parseFloat(t.lat),
-    lng: parseFloat(t.lng),
-    direccion: t.zona || t.direccion || '',
-    horario: t.horario || 'Ver horario en tienda',
-    telefono: t.telefono || ''
+    nombre: t.nombre || t.name || t.tienda || t.titulo || 'Licorería',
+    lat: parseFloat(t.lat ?? t.latitud ?? t.latitude ?? t.Latitud),
+    lng: parseFloat(t.lng ?? t.lon ?? t.longitud ?? t.longitude ?? t.lngitud),
+    direccion: t.direccion || t.address || t.ubicacion || t.dir || '',
+    horario: t.horario || t.hora || t.horas || 'Ver horario en tienda'
   };
 }
 var tiendas = [];
 var marcadores = [];
 var miUbicacion = null;
-function dibujarTiendas(){
-  marcadores.forEach(m=>map.removeLayer(m));
-  marcadores = [];
-  tiendas.forEach((ti)=>{
-    var m = L.marker([ti.lat,ti.lng], {icon: iconoBotella}).addTo(map);
-    m.bindPopup('<b>'+ti.nombre+'</b><br>'+ti.direccion+'<br>'+ti.horario+'<br>'+ti.telefono);
-    marcadores.push(m);
+var tiendaSeleccionada = null;
+var miLat = 18.49, miLng = -69.86;
+function seleccionarTienda(i){
+  tiendaSeleccionada = i;
+  var t = tiendas[i];
+  var d = distKm(miLat, miLng, t.lat, t.lng);
+  document.getElementById('tituloBanner').innerText = '🍾 LICORERÍA SELECCIONADA';
+  document.getElementById('cercaTexto').innerText = t.nombre + ' - a ' + d.toFixed(2) + ' km' + (t.direccion ? ' - ' + t.direccion : '');
+  document.getElementById('horarioTexto').innerText = '🟢 Abierto - ' + t.horario;
+  document.getElementById('comoLlegar').href = 'https://www.google.com/maps/dir/?api=1&destination=' + t.lat + ',' + t.lng;
+  marcadores.forEach((m, j)=>{
+    if(j===i){ m.setIcon(iconoSeleccionada); }
+    else { m.setIcon(iconoBotella); }
   });
 }
 function mostrarCercana(lat,lng){
-  if(!tiendas || tiendas.length===0){
-    // SI NO HAY TIENDAS, USA LAS DE RESPALDO DE UNA VEZ
-    tiendas = TIENDAS_RESPALDO.map(normalizar);
-    dibujarTiendas();
+  miLat = lat; miLng = lng;
+  if(!tiendas || tiendas.length===0) return;
+  if(tiendaSeleccionada !== null){
+    seleccionarTienda(tiendaSeleccionada);
+    return;
   }
   let mejorIndex=0, mejorD=9999, mejor=tiendas[0];
   tiendas.forEach((t,i)=>{
     let d=distKm(lat,lng,t.lat,t.lng);
     if(d<mejorD){mejorD=d;mejorIndex=i;mejor=t;}
   });
-  document.getElementById('cercaTexto').innerText = 'La más cerca: ' + mejor.nombre + ' - a ' + mejorD.toFixed(2) + ' km - ' + mejor.direccion;
-  document.getElementById('horarioTexto').innerText = mejor.horario + (mejor.telefono ? ' | 📞 ' + mejor.telefono : '');
+  document.getElementById('tituloBanner').innerText = '⭐ TU LICORERÍA MÁS CERCANA';
+  document.getElementById('cercaTexto').innerText = 'La más cerca: ' + mejor.nombre + ' - a ' + mejorD.toFixed(2) + ' km' + (mejor.direccion ? ' - ' + mejor.direccion : '');
+  document.getElementById('horarioTexto').innerText = '🟢 Abierto - ' + mejor.horario;
   document.getElementById('comoLlegar').href = 'https://www.google.com/maps/dir/?api=1&destination=' + mejor.lat + ',' + mejor.lng;
-  marcadores.forEach((m,i)=>{
+  marcadores.forEach((m,i)=>{ 
     if(i===mejorIndex){ m.setIcon(iconoBotellaCercana); } else { m.setIcon(iconoBotella); }
   });
   map.setView([lat,lng],13);
@@ -105,6 +108,7 @@ function mostrarCercana(lat,lng){
   miUbicacion = L.marker([lat,lng], {icon: iconoBorracho}).addTo(map);
 }
 function pedirUbicacion(){
+  tiendaSeleccionada = null;
   document.getElementById('cercaTexto').innerText = 'Buscando tu ubicación...';
   if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition(
@@ -112,26 +116,23 @@ function pedirUbicacion(){
       ()=>mostrarCercana(18.49,-69.86),
       {timeout:5000, maximumAge:60000}
     );
-  } else { mostrarCercana(18.49,-69.86); }
-  setTimeout(()=>{
-    let texto = document.getElementById('cercaTexto').innerText;
-    if(texto.includes('Buscando')){ mostrarCercana(18.49,-69.86); }
-  }, 6000);
-}
-// 1. Primero muestra las de respaldo para que NUNCA se quede en "Cargando"
-tiendas = TIENDAS_RESPALDO.map(normalizar);
-dibujarTiendas();
-pedirUbicacion();
-// 2. Después intenta cargar tu tiendas.json por si agregaste más tiendas
-fetch('tiendas.json').then(r=>r.json()).then(datos=>{
-  if(Array.isArray(datos) && datos.length>0){
-    tiendas = datos.map(normalizar).filter(t=>!isNaN(t.lat) && !isNaN(t.lng));
-    if(tiendas.length>0){
-      dibujarTiendas();
-      pedirUbicacion();
-    }
+  } else {
+    mostrarCercana(18.49,-69.86);
   }
-}).catch(()=>{});
+}
+fetch('tiendas.json').then(r=>r.json()).then(datos=>{
+  let lista = Array.isArray(datos) ? datos : (datos.tiendas || datos.data || []);
+  tiendas = lista.map(normalizar).filter(t=>!isNaN(t.lat) && !isNaN(t.lng));
+  tiendas.forEach((ti, i)=>{
+    var m = L.marker([ti.lat,ti.lng], {icon: iconoBotella}).addTo(map);
+    m.bindPopup('<b>'+ti.nombre+'</b><br>'+(ti.direccion||'')+'<br>'+ti.horario);
+    m.on('click', function(){ seleccionarTienda(i); });
+    marcadores.push(m);
+  });
+  pedirUbicacion();
+}).catch(()=>{
+  document.getElementById('cercaTexto').innerText = 'No se pudieron cargar las tiendas';
+});
 </script>
 </body>
 </html>
