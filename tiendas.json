@@ -78,5 +78,15 @@
   "horario": "Abierto · Cierra a las 12 a.m.",
   "telefono": "809-987-1313",
   "tipo": "liquor"
+},
+{
+  "nombre": "Albert's Licores",
+  "zona": "Av. Jiménez Moya, Santo Domingo",
+  "lat": 18.4550389,
+  "lng": -69.9303365,
+  "horario": "Abierto · Cierra a las 12 a.m.",
+  "telefono": "809-000-0000",
+  "tipo": "liquor"
 }
-]
+{
+
