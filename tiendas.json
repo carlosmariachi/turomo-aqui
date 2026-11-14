@@ -33,5 +33,14 @@
   "horario": "ABIERTO - 24 Horas",
   "telefono": "809-432-7345",
   "tipo":  "liquor"
-  }
+  },
+  {
+  "nombre": "La Zona Liquor Store",
+  "zona": "C. Barahona 299, Santo Domingo 10309",
+  "lat": 18.481283,
+  "lng": -69.904378,
+  "horario": "Abierto · Cierra a las 12 a.m.",
+  "telefono": "809-895-4685",
+  "tipo": "liquor"
+}
   ]
