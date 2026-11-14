@@ -69,5 +69,14 @@
   "horario": "Abierto · Cierra a las 12 a.m.",
   "telefono": "809-987-1313",
   "tipo": "liquor"
+},
+{
+  "nombre": "Drinks 2 Go",
+  "zona": "Como dice ahí en Maps",
+  "lat": 18.000000,
+  "lng": -69.000000,
+  "horario": "Abierto · Cierra a las 12 a.m.",
+  "telefono": "809-463-8283",
+  "tipo": "liquor"
 }
   ]
