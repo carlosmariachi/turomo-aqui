@@ -96,5 +96,14 @@
   "horario": "Abierto · Cierra a las 12 a.m.",
   "telefono": "809-000-0000",
   "tipo": "liquor"
+},
+{
+  "nombre": "Eco Licores",
+  "zona": "Av. Ecológica, Santo Domingo",
+  "lat": 18.4838284,
+  "lng": -69.7605664,
+  "horario": "Abierto · Cierra a las 12 a.m.",
+  "telefono": "809-000-0000",
+  "tipo": "liquor"
 }
 ]
