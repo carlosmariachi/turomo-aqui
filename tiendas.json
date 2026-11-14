@@ -51,5 +51,14 @@
   "horario": "Abierto · Cierra a las 12 a.m.",
   "telefono": "809-000-0000",
   "tipo": "liquor"
+},
+{
+  "nombre": "Nombre del lugar",
+  "zona": "Dirección completa",
+  "lat": 18.000000,
+  "lng": -69.000000,
+  "horario": "Abierto · Cierra a las 12 a.m.",
+  "telefono": "809-000-0000",
+  "tipo": "liquor"
 }
   ]
