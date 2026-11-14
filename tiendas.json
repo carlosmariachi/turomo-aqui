@@ -87,5 +87,14 @@
   "horario": "Abierto · Cierra a las 12 a.m.",
   "telefono": "809-000-0000",
   "tipo": "liquor"
+},
+{
+  "nombre": "Drin Cauchera",
+  "zona": "Av. Charles de Gaulle con Av. 11va, Santo Domingo",
+  "lat": 18.4782535,
+  "lng": -69.8282761,
+  "horario": "Abierto · Cierra a las 12 a.m.",
+  "telefono": "809-000-0000",
+  "tipo": "liquor"
 }
 ]
