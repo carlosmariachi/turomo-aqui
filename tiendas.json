@@ -114,5 +114,14 @@
   "horario": "Abierto · Cierra a las 12 a.m.",
   "telefono": "809-000-0000",
   "tipo": "liquor"
+},
+{
+  "nombre": "La Casa De La Caña",
+  "zona": "Av. Venezuela, Santo Domingo",
+  "lat": 18.4886985,
+  "lng": -69.8701672,
+  "horario": "Abierto · Cierra a las 12 a.m.",
+  "telefono": "809-000-0000",
+  "tipo": "liquor"
 }
 ]
