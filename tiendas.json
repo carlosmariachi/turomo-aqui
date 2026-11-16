@@ -132,5 +132,14 @@
   "horario": "Abierto · Cierra a las 12 a.m.",
   "telefono": "809-000-0000",
   "tipo": "liquor"
+},
+{
+  "nombre": "La Casa de la Caña - San Souci",
+  "zona": "San Souci, Santo Domingo",
+  "lat": 18.475272,
+  "lng": -69.8781092,
+  "horario": "Abierto · Cierra a las 12 a.m.",
+  "telefono": "809-000-0000",
+  "tipo": "liquor"
 }
 ]
