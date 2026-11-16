@@ -123,5 +123,14 @@
   "horario": "Abierto · Cierra a las 12 a.m.",
   "telefono": "809-000-0000",
   "tipo": "liquor"
+},
+{
+  "nombre": "El Mercadito de Antonio",
+  "zona": "Av. Dr. Delgado, Santo Domingo",
+  "lat": 18.4723537,
+  "lng": -69.8980628,
+  "horario": "Abierto · Cierra a las 12 a.m.",
+  "telefono": "809-000-0000",
+  "tipo": "liquor"
 }
 ]
