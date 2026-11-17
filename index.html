@@ -7,124 +7,85 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
-body{background:#f2f2f2;padding-bottom:20px}
-header{background:#ff6a00;text-align:center;padding:14px 10px 16px;color:white}
-header h1{font-size:26px;font-weight:900;line-height:1.1}
-header p{font-size:13px;margin-top:4px}
-.buitre{width:95px;height:95px;object-fit:cover;border-radius:50%;margin:10px auto 0;display:block;border:3px solid white;background:#fff}
-.verde{background:#00b84d;color:white;text-align:center;padding:14px 12px}
-.verde h2{font-size:17px}
-.verde p{font-size:13px;margin:6px 0;line-height:1.4}
-.verde .tel{font-weight:bold;font-size:14px;margin:8px 0}
-.btn-blanco{display:block;background:white;color:#00913d;font-weight:900;text-align:center;padding:12px;border-radius:20px;text-decoration:none;margin:10px 0 8px;font-size:16px}
-.btn-naranja{display:block;background:#ff6a00;color:white;font-weight:900;text-align:center;padding:12px;border-radius:20px;text-decoration:none;font-size:15px}
-#map{height:420px;width:100%;z-index:1}
-.buscador{padding:12px}
-.buscador input{width:100%;padding:13px;border-radius:12px;border:1px solid #ddd;font-size:15px}
-.filtros{display:flex;gap:8px;padding:0 12px;overflow-x:auto}
-.filtros button{white-space:nowrap;padding:8px 14px;border-radius:20px;border:none;background:white;font-weight:bold;cursor:pointer}
-.filtros button.activo{background:#ff6a00;color:white}
-.lista{padding:12px;display:flex;flex-direction:column;gap:12px}
-.card{background:white;border-radius:14px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-.card h3{font-size:17px;margin-bottom:4px}
-.card p{font-size:13px;color:#555;margin:2px 0;line-height:1.4}
-.card .dist{color:#00913d;font-weight:bold}
-.card .btns{display:flex;gap:8px;margin-top:10px}
-.btn-mapa{flex:1;background:#00b84d;color:white;text-align:center;padding:11px;border-radius:10px;text-decoration:none;font-weight:bold;font-size:14px}
-.btn-ws{flex:1;background:#25D366;color:white;text-align:center;padding:11px;border-radius:10px;text-decoration:none;font-weight:bold;font-size:14px}
-footer{text-align:center;color:#888;font-size:12px;margin-top:8px}
+body{background:#0f0f0f;color:white;padding-bottom:30px}
+header{background:#ffcc00;color:black;text-align:center;padding:18px 12px;border-radius:0 0 20px 20px}
+header .buitre{font-size:55px;line-height:1}
+header h1{font-size:28px;margin:5px 0 2px}
+header .borracho{font-size:42px;margin:4px 0}
+header p{font-size:14px;font-weight:bold}
+.search{margin:15px;padding:0 15px}
+.search input{width:100%;padding:13px;border-radius:12px;border:none;font-size:16px}
+#map{height:320px;margin:0 15px;border-radius:15px;overflow:hidden;border:3px solid #ffcc00}
+.list{padding:15px;display:flex;flex-direction:column;gap:12px}
+.card{background:#1e1e1e;border-radius:15px;padding:14px;border:1px solid #333}
+.card h3{font-size:18px;margin-bottom:4px}
+.card p{font-size:13px;color:#ccc;margin:2px 0}
+.btns{display:flex;gap:8px;margin-top:10px}
+.btn{flex:1;text-align:center;padding:11px;border-radius:10px;text-decoration:none;font-weight:bold;font-size:14px}
+.btn-mapa{background:#ffcc00;color:black}
+.btn-ws{background:#25D366;color:white}
+footer{text-align:center;color:#888;font-size:12px;margin-top:10px}
 </style>
 </head>
 <body>
 
 <header>
-  <h1>🍷 El Rincón del Borracho</h1>
-  <p>Licorerías cerca de ti en Santo Domingo</p>
-  <img class="buitre" src="buitre.jpg" alt="" onerror="this.src='https://cdn-icons-png.flaticon.com/512/616/616408.png'">
+  <div class="buitre">🦅</div>
+  <h1>El Rincón del Borracho</h1>
+  <div class="borracho">🥴🍾</div>
+  <p>Tu Romo Aquí - Los Alcarrizos</p>
 </header>
 
-<div class="verde">
-  <h2>⭐ TU LICORERÍA MÁS CERCANA</h2>
-  <p id="texto-cercana">La más cerca: El Mercadito de Antonio - a 10.30 km - Av. Dr. Delgado, Santo Domingo</p>
-  <div class="tel">Abierto · Cierra a las 12 a.m. | 📞 809-000-0000</div>
-  <a class="btn-blanco" id="btn-cercana" href="https://www.google.com/maps/search/?api=1&query=El+Mercadito+de+Antonio+Santo+Domingo" target="_blank">📍 CÓMO LLEGAR</a>
-  <a class="btn-naranja" href="#" onclick="usarUbicacion();return false;">📍 USAR MI UBICACIÓN</a>
+<div class="search">
+  <input id="buscador" placeholder="🔍 Busca tu romo, tu tienda..." onkeyup="filtrar()">
 </div>
 
 <div id="map"></div>
 
-<div class="buscador">
-  <input id="busca" placeholder="🔍 Busca tu romo, tu licorería..." onkeyup="filtrar()">
-</div>
-<div class="filtros">
-  <button class="activo" onclick="filtrarCat('todo',this)">Todas</button>
-  <button onclick="filtrarCat('romo',this)">Romo</button>
-  <button onclick="filtrarCat('cerveza',this)">Cerveza</button>
-  <button onclick="filtrarCat('vino',this)">Vino</button>
-  <button onclick="filtrarCat('abierto',this)">Abierto ahora</button>
+<div class="list" id="lista">
+  <div class="card" data-nombre="licoreria el buitre los alcarrizos">
+    <h3>🦅 Licorería El Buitre</h3>
+    <p>📍 Los Alcarrizos, Santo Domingo</p>
+    <p>⭐ Abierto ahora • Romo, cerveza, vino</p>
+    <div class="btns">
+      <a class="btn btn-mapa" href="https://www.google.com/maps/search/?api=1&query=Licoreria+El+Buitre+Los+Alcarrizos" target="_blank">📍 Cómo Llegar</a>
+      <a class="btn btn-ws" href="https://wa.me/18090000000" target="_blank">WhatsApp</a>
+    </div>
+  </div>
+
+  <div class="card" data-nombre="colmado la esquina">
+    <h3>🍾 Colmado La Esquina</h3>
+    <p>📍 Los Alcarrizos</p>
+    <p>⭐ Abierto ahora • Fría y romo a buen precio</p>
+    <div class="btns">
+      <a class="btn btn-mapa" href="https://www.google.com/maps/search/?api=1&query=Colmado+Los+Alcarrizos" target="_blank">📍 Cómo Llegar</a>
+      <a class="btn btn-ws" href="https://wa.me/18090000000" target="_blank">WhatsApp</a>
+    </div>
+  </div>
+
+  <div class="card" data-nombre="licoreria el rincon">
+    <h3>🥴 Licorería El Rincón</h3>
+    <p>📍 Los Alcarrizos</p>
+    <p>⭐ Abierto ahora • Delivery rápido</p>
+    <div class="btns">
+      <a class="btn btn-mapa" href="https://www.google.com/maps/search/?api=1&query=Licoreria+Los+Alcarrizos" target="_blank">📍 Cómo Llegar</a>
+      <a class="btn btn-ws" href="https://wa.me/18090000000" target="_blank">WhatsApp</a>
+    </div>
+  </div>
 </div>
 
-<div class="lista" id="lista"></div>
-<footer>El Rincón del Borracho 🍷🥴🍾 - Santo Domingo</footer>
+<footer>El Rincón del Borracho 🦅🥴🍾 - Los Alcarrizos</footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-var tiendas=[
-{n:"El Mercadito de Antonio",d:"Av. Dr. Delgado, Santo Domingo",lat:18.48,lng:-69.88,cat:"romo",tel:"8090000000",hora:"Cierra a las 12 a.m."},
-{n:"Licorería El Buitre",d:"Los Alcarrizos, Santo Domingo",lat:18.523,lng:-69.991,cat:"romo",tel:"8090000000",hora:"Abierto ahora"},
-{n:"Licorería El Rincón",d:"Los Alcarrizos",lat:18.50,lng:-69.85,cat:"cerveza",tel:"8090000000",hora:"Abierto ahora"},
-{n:"Colmado La Esquina",d:"Villa Mella",lat:18.55,lng:-69.92,cat:"cerveza",tel:"8090000000",hora:"Abierto ahora"},
-{n:"Licorería La Victoria",d:"La Victoria",lat:18.58,lng:-69.85,cat:"vino",tel:"8090000000",hora:"Cierra a las 11 p.m."},
-{n:"Drink Point Santo Domingo",d:"Distrito Nacional",lat:18.47,lng:-69.90,cat:"romo",tel:"8090000000",hora:"Abierto ahora"},
-{n:"Licorería Brisas del Este",d:"Santo Domingo Este",lat:18.48,lng:-69.82,cat:"cerveza",tel:"8090000000",hora:"Abierto ahora"},
-{n:"Colmado El Primo",d:"Sabana Perdida",lat:18.54,lng:-69.90,cat:"romo",tel:"8090000000",hora:"Abierto ahora"},
-{n:"Licorería La Bodega",d:"Los Mina",lat:18.49,lng:-69.87,cat:"vino",tel:"8090000000",hora:"Abierto ahora"},
-{n:"Super Colmado Central",d:"Villa Duarte",lat:18.48,lng:-69.86,cat:"cerveza",tel:"8090000000",hora:"Abierto ahora"},
-{n:"Licorería Don Pepe",d:"Haina",lat:18.42,lng:-70.02,cat:"romo",tel:"8090000000",hora:"Cierra a las 12 a.m."},
-{n:"Colmado La Fe",d:"San Luis",lat:18.52,lng:-69.78,cat:"cerveza",tel:"8090000000",hora:"Abierto ahora"}
-];
-var map=L.map('map').setView([18.50,-69.90],12);
+var map = L.map('map').setView([18.523, -69.991], 14);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
-var cara=L.divIcon({className:'',html:'<div style="font-size:34px">🥴</div>',iconSize:[34,34]});
-L.marker([18.52,-69.99],{icon:cara}).addTo(map).bindPopup('Tú estás por aquí 🥴🍾');
-var botella=L.divIcon({className:'',html:'<div style="font-size:28px">🍾</div>',iconSize:[28,28]});
-tiendas.forEach(function(t){
-  L.marker([t.lat,t.lng],{icon:botella}).addTo(map).bindPopup('<b>'+t.n+'</b><br>'+t.d);
-});
-function pintar(lista){
-  var h='';
-  lista.forEach(function(t){
-    h+='<div class="card" data-cat="'+t.cat+'"><h3>🍾 '+t.n+'</h3><p>📍 '+t.d+'</p><p class="dist">⭐ '+t.hora+' • A buen precio</p><div class="btns"><a class="btn-mapa" href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(t.n+' '+t.d)+'" target="_blank">📍 Cómo Llegar</a><a class="btn-ws" href="https://wa.me/1'+t.tel+'" target="_blank">WhatsApp</a></div></div>';
-  });
-  document.getElementById('lista').innerHTML=h;
-}
-pintar(tiendas);
+L.marker([18.523, -69.991]).addTo(map).bindPopup('<b>El Rincón del Borracho</b><br>Los Alcarrizos').openPopup();
 function filtrar(){
-  var v=document.getElementById('busca').value.toLowerCase();
-  pintar(tiendas.filter(function(t){return t.n.toLowerCase().includes(v)||t.d.toLowerCase().includes(v)}));
-}
-function filtrarCat(c,btn){
-  document.querySelectorAll('.filtros button').forEach(function(b){b.classList.remove('activo')});
-  btn.classList.add('activo');
-  if(c=='todo') pintar(tiendas);
-  else if(c=='abierto') pintar(tiendas.filter(function(t){return t.hora.includes('Abierto')}));
-  else pintar(tiendas.filter(function(t){return t.cat==c}));
-}
-function usarUbicacion(){
-  if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(function(p){
-      var la=p.coords.latitude, lo=p.coords.longitude;
-      map.setView([la,lo],14);
-      L.marker([la,lo]).addTo(map).bindPopup('Tú estás aquí').openPopup();
-      var cerca=tiendas[0], distMin=9999;
-      tiendas.forEach(function(t){
-        var d=Math.sqrt(Math.pow(t.lat-la,2)+Math.pow(t.lng-lo,2));
-        if(d<distMin){distMin=d;cerca=t}
-      });
-      document.getElementById('texto-cercana').innerText='La más cerca: '+cerca.n+' - '+cerca.d;
-      document.getElementById('btn-cercana').href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(cerca.n+' '+cerca.d);
-    });
-  }
+  var v=document.getElementById('buscador').value.toLowerCase();
+  document.querySelectorAll('.card').forEach(function(c){
+    c.style.display=c.getAttribute('data-nombre').includes(v)?'block':'none';
+  });
 }
 </script>
 </body>
