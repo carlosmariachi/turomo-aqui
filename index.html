@@ -4,78 +4,89 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>El Rincón del Borracho</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui,-apple-system,sans-serif;background:#0f0f0f;color:#fff;padding:15px}
-header{text-align:center;padding:20px 10px;background:#1a1a1a;border-radius:15px;margin-bottom:15px}
-header h1{font-size:28px;color:#ffcc00}
-header p{color:#aaa;margin-top:5px}
-#buscador{width:100%;padding:14px;border-radius:10px;border:none;font-size:16px;margin-bottom:10px}
-#btnUbicacion{width:100%;padding:14px;background:#ffcc00;color:#000;border:none;border-radius:10px;font-weight:bold;font-size:16px;margin-bottom:15px}
-.tienda{background:#1e1e1e;border-radius:12px;padding:15px;margin-bottom:12px;border-left:4px solid #ffcc00}
-.tienda h3{font-size:18px;color:#ffcc00}
-.tienda p{font-size:14px;color:#ccc;margin:4px 0}
-.dist{color:#4ade80;font-weight:bold}
-.botones{display:flex;gap:8px;margin-top:10px}
-.botones a{flex:1;text-align:center;padding:11px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:14px}
-.btn-mapa{background:#25D366;color:#fff}
-.btn-llamar{background:#fff;color:#000}
-.btn-ws{background:#128C7E;color:#fff}
-#contador{text-align:center;color:#aaa;margin-bottom:10px}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{background:#0f0f0f;color:white;padding-bottom:30px}
+header{background:#ffcc00;color:black;text-align:center;padding:18px 12px;border-radius:0 0 20px 20px}
+header .buitre{font-size:55px;line-height:1}
+header h1{font-size:28px;margin:5px 0 2px}
+header .borracho{font-size:42px;margin:4px 0}
+header p{font-size:14px;font-weight:bold}
+.search{margin:15px;padding:0 15px}
+.search input{width:100%;padding:13px;border-radius:12px;border:none;font-size:16px}
+#map{height:320px;margin:0 15px;border-radius:15px;overflow:hidden;border:3px solid #ffcc00}
+.list{padding:15px;display:flex;flex-direction:column;gap:12px}
+.card{background:#1e1e1e;border-radius:15px;padding:14px;border:1px solid #333}
+.card h3{font-size:18px;margin-bottom:4px}
+.card p{font-size:13px;color:#ccc;margin:2px 0}
+.btns{display:flex;gap:8px;margin-top:10px}
+.btn{flex:1;text-align:center;padding:11px;border-radius:10px;text-decoration:none;font-weight:bold;font-size:14px}
+.btn-mapa{background:#ffcc00;color:black}
+.btn-ws{background:#25D366;color:white}
+footer{text-align:center;color:#888;font-size:12px;margin-top:10px}
 </style>
 </head>
 <body>
+
 <header>
-<h1>🥴 El Rincón del Borracho</h1>
-<p>Tu romo a la vuelta de la esquina</p>
+  <div class="buitre">🦅</div>
+  <h1>El Rincón del Borracho</h1>
+  <div class="borracho">🥴🍾</div>
+  <p>Tu Romo Aquí - Los Alcarrizos</p>
 </header>
-<input id="buscador" placeholder="🔍 Busca: Charles de Gaulle, San Vicente, Drinks 2 Go...">
-<button id="btnUbicacion">📍 Usar mi ubicación</button>
-<div id="contador"></div>
-<div id="lista">Cargando tiendas...</div>
+
+<div class="search">
+  <input id="buscador" placeholder="🔍 Busca tu romo, tu tienda..." onkeyup="filtrar()">
+</div>
+
+<div id="map"></div>
+
+<div class="list" id="lista">
+  <div class="card" data-nombre="licoreria el buitre los alcarrizos">
+    <h3>🦅 Licorería El Buitre</h3>
+    <p>📍 Los Alcarrizos, Santo Domingo</p>
+    <p>⭐ Abierto ahora • Romo, cerveza, vino</p>
+    <div class="btns">
+      <a class="btn btn-mapa" href="https://www.google.com/maps/search/?api=1&query=Licoreria+El+Buitre+Los+Alcarrizos" target="_blank">📍 Cómo Llegar</a>
+      <a class="btn btn-ws" href="https://wa.me/18090000000" target="_blank">WhatsApp</a>
+    </div>
+  </div>
+
+  <div class="card" data-nombre="colmado la esquina">
+    <h3>🍾 Colmado La Esquina</h3>
+    <p>📍 Los Alcarrizos</p>
+    <p>⭐ Abierto ahora • Fría y romo a buen precio</p>
+    <div class="btns">
+      <a class="btn btn-mapa" href="https://www.google.com/maps/search/?api=1&query=Colmado+Los+Alcarrizos" target="_blank">📍 Cómo Llegar</a>
+      <a class="btn btn-ws" href="https://wa.me/18090000000" target="_blank">WhatsApp</a>
+    </div>
+  </div>
+
+  <div class="card" data-nombre="licoreria el rincon">
+    <h3>🥴 Licorería El Rincón</h3>
+    <p>📍 Los Alcarrizos</p>
+    <p>⭐ Abierto ahora • Delivery rápido</p>
+    <div class="btns">
+      <a class="btn btn-mapa" href="https://www.google.com/maps/search/?api=1&query=Licoreria+Los+Alcarrizos" target="_blank">📍 Cómo Llegar</a>
+      <a class="btn btn-ws" href="https://wa.me/18090000000" target="_blank">WhatsApp</a>
+    </div>
+  </div>
+</div>
+
+<footer>El Rincón del Borracho 🦅🥴🍾 - Los Alcarrizos</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-let tiendas=[];
-let miLat=null, miLng=null;
-function distKm(lat1,lon1,lat2,lon2){
-  const R=6371, dLat=(lat2-lat1)*Math.PI/180, dLon=(lon2-lon1)*Math.PI/180;
-  const a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
-  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
-}
-function mostrar(){
-  const q=document.getElementById('buscador').value.toLowerCase();
-  let filtradas=tiendas.filter(t=>(t.nombre+' '+t.zona).toLowerCase().includes(q));
-  filtradas=filtradas.map(t=>{
-    let d=null;
-    if(miLat) d=distKm(miLat,miLng,t.lat,t.lng);
-    return {...t, d};
+var map = L.map('map').setView([18.523, -69.991], 14);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
+L.marker([18.523, -69.991]).addTo(map).bindPopup('<b>El Rincón del Borracho</b><br>Los Alcarrizos').openPopup();
+function filtrar(){
+  var v=document.getElementById('buscador').value.toLowerCase();
+  document.querySelectorAll('.card').forEach(function(c){
+    c.style.display=c.getAttribute('data-nombre').includes(v)?'block':'none';
   });
-  if(miLat) filtradas.sort((a,b)=>a.d-b.d);
-  document.getElementById('contador').innerText=filtradas.length+' tiendas encontradas';
-  document.getElementById('lista').innerHTML=filtradas.map(t=>{
-    const tel=(t.telefono||'').replace(/[^0-9]/g,'');
-    const wsLink='https://wa.me/1'+tel+'?text='+encodeURIComponent('Hola, quiero pedir un romo en '+t.nombre);
-    const mapaLink='https://www.google.com/maps/search/?api=1&query='+t.lat+','+t.lng;
-    return `<div class="tienda">
-      <h3>${t.nombre}</h3>
-      <p>📍 ${t.zona}</p>
-      <p>🕒 ${t.horario||''}</p>
-      <p>📞 ${t.telefono||''}</p>
-      ${t.d!=null?`<p class="dist">📍 A ${t.d.toFixed(1)} km de ti</p>`:''}
-      <div class="botones">
-        <a class="btn-mapa" href="${mapaLink}" target="_blank">🗺️ Cómo llegar</a>
-        <a class="btn-llamar" href="tel:+1${tel}">📞 Llamar</a>
-        <a class="btn-ws" href="${wsLink}" target="_blank">💬 WhatsApp</a>
-      </div>
-    </div>`;
-  }).join('') || '<p style="text-align:center">No hay resultados</p>';
 }
-fetch('tiendas.json?v=105').then(r=>r.json()).then(d=>{tiendas=d;mostrar();}).catch(()=>{document.getElementById('lista').innerHTML='Error cargando tiendas';});
-document.getElementById('buscador').addEventListener('input',mostrar);
-document.getElementById('btnUbicacion').addEventListener('click',()=>{
-  if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(p=>{miLat=p.coords.latitude;miLng=p.coords.longitude;mostrar();},()=>{alert('Activa tu ubicación');});
-  } else {alert('Tu celular no permite ubicación');}
-});
 </script>
 </body>
 </html>
