@@ -3,90 +3,135 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>El Rincón del Borracho</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<title>Tu Romo Aquí</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
-body{background:#0f0f0f;color:white;padding-bottom:30px}
-header{background:#ffcc00;color:black;text-align:center;padding:18px 12px;border-radius:0 0 20px 20px}
-header .buitre{font-size:55px;line-height:1}
-header h1{font-size:28px;margin:5px 0 2px}
-header .borracho{font-size:42px;margin:4px 0}
-header p{font-size:14px;font-weight:bold}
-.search{margin:15px;padding:0 15px}
-.search input{width:100%;padding:13px;border-radius:12px;border:none;font-size:16px}
-#map{height:320px;margin:0 15px;border-radius:15px;overflow:hidden;border:3px solid #ffcc00}
-.list{padding:15px;display:flex;flex-direction:column;gap:12px}
-.card{background:#1e1e1e;border-radius:15px;padding:14px;border:1px solid #333}
-.card h3{font-size:18px;margin-bottom:4px}
-.card p{font-size:13px;color:#ccc;margin:2px 0}
-.btns{display:flex;gap:8px;margin-top:10px}
-.btn{flex:1;text-align:center;padding:11px;border-radius:10px;text-decoration:none;font-weight:bold;font-size:14px}
-.btn-mapa{background:#ffcc00;color:black}
-.btn-ws{background:#25D366;color:white}
-footer{text-align:center;color:#888;font-size:12px;margin-top:10px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,sans-serif;background:#f5f5f5}
+header{background:#ff6b00;color:white;padding:15px;text-align:center}
+header h1{font-size:22px}
+header p{font-size:12px;margin-top:3px}
+header img{width:80px;height:80px;border-radius:50%;object-fit:cover;margin-top:8px}
+.banner{background:#00c853;color:white;text-align:center;padding:12px}
+.banner h2{font-size:15px}
+.banner p{font-size:13px;margin:6px 0}
+.banner .abierto{font-weight:bold}
+.banner a{display:block;background:white;color:#00c853;text-decoration:none;padding:10px;border-radius:20px;font-weight:bold;margin-top:8px}
+#map{height:450px;width:100%}
+.marcador{font-size:32px;text-align:center;line-height:1}
+.marcador-borracho{font-size:38px}
+.titilando{animation:titila 1s infinite}
+@keyframes titila{0%{transform:scale(1);opacity:1}50%{transform:scale(1.2);opacity:0.7}100%{transform:scale(1);opacity:1}}
+.seleccionada{animation:titila 0.7s infinite; filter: drop-shadow(0 0 8px yellow);}
+.btn-ubicacion{background:#ff6b00;color:white;border:none;padding:10px 15px;border-radius:20px;font-weight:bold;margin-top:8px;width:100%;font-size:14px}
 </style>
 </head>
 <body>
-
 <header>
-  <div class="buitre">🦅</div>
-  <h1>El Rincón del Borracho</h1>
-  <div class="borracho">🥴🍾</div>
-  <p>Tu Romo Aquí - Los Alcarrizos</p>
+<div>
+<h1>🍷 Tu Romo Aquí</h1>
+<p>Licorerías cerca de ti en Santo Domingo</p>
+<img src="IMG_7927.jpeg">
+</div>
 </header>
-
-<div class="search">
-  <input id="buscador" placeholder="🔍 Busca tu romo, tu tienda..." onkeyup="filtrar()">
+<div class="banner">
+<h2 id="tituloBanner">⭐ TU LICORERÍA MÁS CERCANA</h2>
+<p id="cercaTexto">Buscando tu ubicación...</p>
+<p class="abierto" id="horarioTexto">🟢 Buscando horario...</p>
+<a id="comoLlegar" href="#" target="_blank">📍 CÓMO LLEGAR</a>
+<button class="btn-ubicacion" onclick="pedirUbicacion()">📍 USAR MI UBICACIÓN</button>
 </div>
-
 <div id="map"></div>
-
-<div class="list" id="lista">
-  <div class="card" data-nombre="licoreria el buitre los alcarrizos">
-    <h3>🦅 Licorería El Buitre</h3>
-    <p>📍 Los Alcarrizos, Santo Domingo</p>
-    <p>⭐ Abierto ahora • Romo, cerveza, vino</p>
-    <div class="btns">
-      <a class="btn btn-mapa" href="https://www.google.com/maps/search/?api=1&query=Licoreria+El+Buitre+Los+Alcarrizos" target="_blank">📍 Cómo Llegar</a>
-      <a class="btn btn-ws" href="https://wa.me/18090000000" target="_blank">WhatsApp</a>
-    </div>
-  </div>
-
-  <div class="card" data-nombre="colmado la esquina">
-    <h3>🍾 Colmado La Esquina</h3>
-    <p>📍 Los Alcarrizos</p>
-    <p>⭐ Abierto ahora • Fría y romo a buen precio</p>
-    <div class="btns">
-      <a class="btn btn-mapa" href="https://www.google.com/maps/search/?api=1&query=Colmado+Los+Alcarrizos" target="_blank">📍 Cómo Llegar</a>
-      <a class="btn btn-ws" href="https://wa.me/18090000000" target="_blank">WhatsApp</a>
-    </div>
-  </div>
-
-  <div class="card" data-nombre="licoreria el rincon">
-    <h3>🥴 Licorería El Rincón</h3>
-    <p>📍 Los Alcarrizos</p>
-    <p>⭐ Abierto ahora • Delivery rápido</p>
-    <div class="btns">
-      <a class="btn btn-mapa" href="https://www.google.com/maps/search/?api=1&query=Licoreria+Los+Alcarrizos" target="_blank">📍 Cómo Llegar</a>
-      <a class="btn btn-ws" href="https://wa.me/18090000000" target="_blank">WhatsApp</a>
-    </div>
-  </div>
-</div>
-
-<footer>El Rincón del Borracho 🦅🥴🍾 - Los Alcarrizos</footer>
-
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-var map = L.map('map').setView([18.523, -69.991], 14);
+var map = L.map('map').setView([18.49,-69.86],13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
-L.marker([18.523, -69.991]).addTo(map).bindPopup('<b>El Rincón del Borracho</b><br>Los Alcarrizos').openPopup();
-function filtrar(){
-  var v=document.getElementById('buscador').value.toLowerCase();
-  document.querySelectorAll('.card').forEach(function(c){
-    c.style.display=c.getAttribute('data-nombre').includes(v)?'block':'none';
+var iconoBotella = L.divIcon({className:'', html:'<div class="marcador">🍾</div>', iconSize:[32,32]});
+var iconoBotellaCercana = L.divIcon({className:'', html:'<div class="marcador titilando">🍾</div>', iconSize:[32,32]});
+var iconoSeleccionada = L.divIcon({className:'', html:'<div class="marcador seleccionada">🍾</div>', iconSize:[32,32]});
+var iconoBorracho = L.divIcon({className:'', html:'<div class="marcador-borracho">🥴</div>', iconSize:[38,38]});
+function distKm(lat1,lng1,lat2,lng2){
+  const R=6371;
+  const dLat=(lat2-lat1)*Math.PI/180;
+  const dLng=(lng2-lng1)*Math.PI/180;
+  const a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)*Math.sin(dLng/2);
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+function normalizar(t){
+  return {
+    nombre: t.nombre || t.name || t.tienda || t.titulo || 'Licorería',
+    lat: parseFloat(t.lat ?? t.latitud ?? t.latitude ?? t.Latitud),
+    lng: parseFloat(t.lng ?? t.lon ?? t.longitud ?? t.longitude ?? t.lngitud),
+    direccion: t.direccion || t.address || t.ubicacion || t.dir || '',
+    horario: t.horario || t.hora || t.horas || 'Ver horario en tienda'
+  };
+}
+var tiendas = [];
+var marcadores = [];
+var miUbicacion = null;
+var tiendaSeleccionada = null;
+var miLat = 18.49, miLng = -69.86;
+function seleccionarTienda(i){
+  tiendaSeleccionada = i;
+  var t = tiendas[i];
+  var d = distKm(miLat, miLng, t.lat, t.lng);
+  document.getElementById('tituloBanner').innerText = '🍾 LICORERÍA SELECCIONADA';
+  document.getElementById('cercaTexto').innerText = t.nombre + ' - a ' + d.toFixed(2) + ' km' + (t.direccion ? ' - ' + t.direccion : '');
+  document.getElementById('horarioTexto').innerText = '🟢 Abierto - ' + t.horario;
+  document.getElementById('comoLlegar').href = 'https://www.google.com/maps/dir/?api=1&destination=' + t.lat + ',' + t.lng;
+  marcadores.forEach((m, j)=>{
+    if(j===i){ m.setIcon(iconoSeleccionada); }
+    else { m.setIcon(iconoBotella); }
   });
 }
+function mostrarCercana(lat,lng){
+  miLat = lat; miLng = lng;
+  if(!tiendas || tiendas.length===0) return;
+  if(tiendaSeleccionada !== null){
+    seleccionarTienda(tiendaSeleccionada);
+    return;
+  }
+  let mejorIndex=0, mejorD=9999, mejor=tiendas[0];
+  tiendas.forEach((t,i)=>{
+    let d=distKm(lat,lng,t.lat,t.lng);
+    if(d<mejorD){mejorD=d;mejorIndex=i;mejor=t;}
+  });
+  document.getElementById('tituloBanner').innerText = '⭐ TU LICORERÍA MÁS CERCANA';
+  document.getElementById('cercaTexto').innerText = 'La más cerca: ' + mejor.nombre + ' - a ' + mejorD.toFixed(2) + ' km' + (mejor.direccion ? ' - ' + mejor.direccion : '');
+  document.getElementById('horarioTexto').innerText = '🟢 Abierto - ' + mejor.horario;
+  document.getElementById('comoLlegar').href = 'https://www.google.com/maps/dir/?api=1&destination=' + mejor.lat + ',' + mejor.lng;
+  marcadores.forEach((m,i)=>{ 
+    if(i===mejorIndex){ m.setIcon(iconoBotellaCercana); } else { m.setIcon(iconoBotella); }
+  });
+  map.setView([lat,lng],13);
+  if(miUbicacion){ map.removeLayer(miUbicacion); }
+  miUbicacion = L.marker([lat,lng], {icon: iconoBorracho}).addTo(map);
+}
+function pedirUbicacion(){
+  document.getElementById('cercaTexto').innerText = 'Buscando tu ubicación...';
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(
+      p=>mostrarCercana(p.coords.latitude, p.coords.longitude),
+      ()=>mostrarCercana(18.49,-69.86),
+      {timeout:5000, maximumAge:60000}
+    );
+  } else {
+    mostrarCercana(18.49,-69.86);
+  }
+}
+fetch('tiendas.json').then(r=>r.json()).then(datos=>{
+  let lista = Array.isArray(datos) ? datos : (datos.tiendas || datos.data || []);
+  tiendas = lista.map(normalizar).filter(t=>!isNaN(t.lat) && !isNaN(t.lng));
+  tiendas.forEach((ti, i)=>{
+    var m = L.marker([ti.lat,ti.lng], {icon: iconoBotella}).addTo(map);
+    m.bindPopup('<b>'+ti.nombre+'</b><br>'+(ti.direccion||'')+'<br>'+ti.horario);
+    m.on('click', function(){ seleccionarTienda(i); });
+    marcadores.push(m);
+  });
+  pedirUbicacion();
+}).catch(()=>{
+  document.getElementById('cercaTexto').innerText = 'No se pudieron cargar las tiendas';
+});
 </script>
 </body>
 </html>
