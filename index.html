@@ -55,7 +55,7 @@ function distKm(lat1,lng1,lat2,lng2){
   const a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)*Math.sin(dLng/2);
   return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
-var tiendas = [
+var tiendasRespaldo = [
   {nombre:"El Punto Liquor Store", zona:"Aut. San Isidro, Santo Domingo Este - Frente Hotel Golden House", lat:18.485748, lng:-69.843905, horario:"ABIERTO - Cierra 12:05 a.m. | Abre 9:30 a.m.", telefono:"809-596-2640"},
   {nombre:"On Time Liquor Store - Charles de Gaulle", zona:"Av. Charles de Gaulle, al lado de Shell, Santo Domingo Este", lat:18.492535, lng:-69.824343, horario:"Abierto - Cierra a las 12 a.m.", telefono:"809-576-7665"},
   {nombre:"Mega Drinks - San Vicente", zona:"Av. San Vicente de Paúl 2-328, Santo Domingo Este", lat:18.494181, lng:-69.851282, horario:"Abierto - Cierra a las 11 p.m.", telefono:"809-594-7778"},
@@ -64,23 +64,27 @@ var tiendas = [
   {nombre:"La Casa de la Caña - San Souci", zona:"San Souci, Santo Domingo", lat:18.475272, lng:-69.8781092, horario:"Abierto · Cierra a las 12 a.m.", telefono:"809-000-0000"},
   {nombre:"Kapicua Liquor Store - Charles de Gaulle", zona:"Av. Charles de Gaulle, al lado de 365 Food Rd, Santo Domingo Este", lat:18.5116736, lng:-69.8308011, horario:"Abierto - Ver horario en tienda", telefono:"809-567-1398"}
 ];
+var tiendas = [];
 var marcadores = [];
 var miUbicacion = null;
 function dibujarTiendas(){
+  marcadores.forEach(m=>map.removeLayer(m));
+  marcadores=[];
   tiendas.forEach((ti)=>{
     var m = L.marker([ti.lat,ti.lng], {icon: iconoBotella}).addTo(map);
-    m.bindPopup('<b>'+ti.nombre+'</b><br>'+ti.zona+'<br>'+ti.horario+'<br>'+ti.telefono);
+    m.bindPopup('<b>'+ti.nombre+'</b><br>'+ti.zona+'<br>'+(ti.horario||'')+'<br>'+(ti.telefono||''));
     marcadores.push(m);
   });
 }
 function mostrarCercana(lat,lng){
+  if(!tiendas.length) return;
   let mejorIndex=0, mejorD=9999, mejor=tiendas[0];
   tiendas.forEach((t,i)=>{
     let d=distKm(lat,lng,t.lat,t.lng);
     if(d<mejorD){mejorD=d;mejorIndex=i;mejor=t;}
   });
   document.getElementById('cercaTexto').innerText = 'La más cerca: ' + mejor.nombre + ' - a ' + mejorD.toFixed(2) + ' km - ' + mejor.zona;
-  document.getElementById('horarioTexto').innerText = mejor.horario + ' | 📞 ' + mejor.telefono;
+  document.getElementById('horarioTexto').innerText = (mejor.horario||'') + ' | 📞 ' + (mejor.telefono||'');
   document.getElementById('comoLlegar').href = 'https://www.google.com/maps/dir/?api=1&destination=' + mejor.lat + ',' + mejor.lng;
   marcadores.forEach((m,i)=>{
     if(i===mejorIndex){ m.setIcon(iconoBotellaCercana); } else { m.setIcon(iconoBotella); }
@@ -103,8 +107,20 @@ function pedirUbicacion(){
     if(texto.includes('Buscando')){ mostrarCercana(18.49,-69.86); }
   }, 6000);
 }
-dibujarTiendas();
-pedirUbicacion();
+// PRIMERO INTENTA CARGAR TODAS DESDE tiendas.json
+fetch('tiendas.json?v=' + Date.now())
+  .then(r=>r.json())
+  .then(data=>{
+    tiendas = data;
+    dibujarTiendas();
+    pedirUbicacion();
+  })
+  .catch(()=>{
+    // SI EL JSON FALLA, USA LAS 7 DE RESPALDO
+    tiendas = tiendasRespaldo;
+    dibujarTiendas();
+    pedirUbicacion();
+  });
 </script>
 </body>
 </html>
