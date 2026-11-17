@@ -141,5 +141,14 @@
   "horario": "Abierto · Cierra a las 12 a.m.",
   "telefono": "809-000-0000",
   "tipo": "liquor"
+},
+{
+  "nombre": "Kapicua Liquor Store - Charles de Gaulle",
+  "zona": "Av. Charles de Gaulle, al lado de 365 Food Rd, Santo Domingo Este",
+  "lat": 18.5116736,
+  "lng": -69.8308011,
+  "horario": "Abierto - Ver horario en tienda",
+  "telefono": "809-567- 1398"
+  "tipo": "liquor"
 }
 ]
