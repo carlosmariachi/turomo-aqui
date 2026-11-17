@@ -3,124 +3,79 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>El Rincon del Borracho</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<title>El Rincón del Borracho</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Arial,sans-serif;background:#f5f5f5}
-header{background:#ff6b00;color:white;padding:15px;text-align:center}
-header h1{font-size:22px}
-header p{font-size:12px;margin-top:3px}
-header img{width:80px;height:80px;border-radius:50%;object-fit:cover;margin-top:8px}
-.banner{background:#00c853;color:white;text-align:center;padding:12px}
-.banner h2{font-size:15px}
-.banner p{font-size:13px;margin:6px 0}
-.banner .abierto{font-weight:bold}
-.banner a{display:block;background:white;color:#00c853;text-decoration:none;padding:10px;border-radius:20px;font-weight:bold;margin-top:8px}
-#map{height:450px;width:100%}
-.marcador{font-size:32px;text-align:center;line-height:1}
-.marcador-borracho{font-size:38px}
-.titilando{animation:titila 1s infinite}
-@keyframes titila{0%{transform:scale(1);opacity:1}50%{transform:scale(1.2);opacity:0.7}100%{transform:scale(1);opacity:1}}
-.btn-ubicacion{background:#ff6b00;color:white;border:none;padding:10px 15px;border-radius:20px;font-weight:bold;margin-top:8px;width:100%;font-size:14px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:#0f0f0f;color:#fff;padding:15px}
+header{text-align:center;padding:20px 10px;background:#1a1a1a;border-radius:15px;margin-bottom:15px}
+header h1{font-size:28px;color:#ffcc00}
+header p{color:#aaa;margin-top:5px}
+#buscador{width:100%;padding:14px;border-radius:10px;border:none;font-size:16px;margin-bottom:10px}
+#btnUbicacion{width:100%;padding:14px;background:#ffcc00;color:#000;border:none;border-radius:10px;font-weight:bold;font-size:16px;margin-bottom:15px}
+.tienda{background:#1e1e1e;border-radius:12px;padding:15px;margin-bottom:12px;border-left:4px solid #ffcc00}
+.tienda h3{font-size:18px;color:#ffcc00}
+.tienda p{font-size:14px;color:#ccc;margin:4px 0}
+.dist{color:#4ade80;font-weight:bold}
+.botones{display:flex;gap:8px;margin-top:10px}
+.botones a{flex:1;text-align:center;padding:11px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:14px}
+.btn-mapa{background:#25D366;color:#fff}
+.btn-llamar{background:#fff;color:#000}
+.btn-ws{background:#128C7E;color:#fff}
+#contador{text-align:center;color:#aaa;margin-bottom:10px}
 </style>
 </head>
 <body>
 <header>
-<div>
-<h1>Tu Romo Aquí</h1>
-<p>Licorerías cerca de ti en Santo Domingo</p>
-<img src="IMG_7927.jpeg">
-</div>
+<h1>🥴 El Rincón del Borracho</h1>
+<p>Tu romo a la vuelta de la esquina</p>
 </header>
-<div class="banner">
-<h2>⭐ TU LICORERÍA MÁS CERCANA</h2>
-<p id="cercaTexto">Cargando...</p>
-<p class="abierto" id="horarioTexto">🟢 Buscando horario...</p>
-<a id="comoLlegar" href="#" target="_blank">📍 CÓMO LLEGAR</a>
-<button class="btn-ubicacion" onclick="pedirUbicacion()">📍 USAR MI UBICACIÓN</button>
-</div>
-<div id="map"></div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<input id="buscador" placeholder="🔍 Busca: Charles de Gaulle, San Vicente, Drinks 2 Go...">
+<button id="btnUbicacion">📍 Usar mi ubicación</button>
+<div id="contador"></div>
+<div id="lista">Cargando tiendas...</div>
 <script>
-var map = L.map('map').setView([18.49,-69.86],13);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
-var iconoBotella = L.divIcon({className:'', html:'<div class="marcador">🍾</div>', iconSize:[32,32]});
-var iconoBotellaCercana = L.divIcon({className:'', html:'<div class="marcador titilando">🍾</div>', iconSize:[32,32]});
-var iconoBorracho = L.divIcon({className:'', html:'<div class="marcador-borracho">🥴</div>', iconSize:[38,38]});
-function distKm(lat1,lng1,lat2,lng2){
-  const R=6371;
-  const dLat=(lat2-lat1)*Math.PI/180;
-  const dLng=(lng2-lng1)*Math.PI/180;
-  const a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)*Math.sin(dLng/2);
+let tiendas=[];
+let miLat=null, miLng=null;
+function distKm(lat1,lon1,lat2,lon2){
+  const R=6371, dLat=(lat2-lat1)*Math.PI/180, dLon=(lon2-lon1)*Math.PI/180;
+  const a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
   return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
-var tiendasRespaldo = [
-  {nombre:"El Punto Liquor Store", zona:"Aut. San Isidro, Santo Domingo Este - Frente Hotel Golden House", lat:18.485748, lng:-69.843905, horario:"ABIERTO - Cierra 12:05 a.m. | Abre 9:30 a.m.", telefono:"809-596-2640"},
-  {nombre:"On Time Liquor Store - Charles de Gaulle", zona:"Av. Charles de Gaulle, al lado de Shell, Santo Domingo Este", lat:18.492535, lng:-69.824343, horario:"Abierto - Cierra a las 12 a.m.", telefono:"809-576-7665"},
-  {nombre:"Mega Drinks - San Vicente", zona:"Av. San Vicente de Paúl 2-328, Santo Domingo Este", lat:18.494181, lng:-69.851282, horario:"Abierto - Cierra a las 11 p.m.", telefono:"809-594-7778"},
-  {nombre:"La Casa De La Caña", zona:"Av. Venezuela, Santo Domingo", lat:18.4886985, lng:-69.8701672, horario:"Abierto · Cierra a las 12 a.m.", telefono:"809-000-0000"},
-  {nombre:"El Mercadito de Antonio", zona:"Av. Dr. Delgado, Santo Domingo", lat:18.4723537, lng:-69.8980628, horario:"Abierto · Cierra a las 12 a.m.", telefono:"809-000-0000"},
-  {nombre:"La Casa de la Caña - San Souci", zona:"San Souci, Santo Domingo", lat:18.475272, lng:-69.8781092, horario:"Abierto · Cierra a las 12 a.m.", telefono:"809-000-0000"},
-  {nombre:"Kapicua Liquor Store - Charles de Gaulle", zona:"Av. Charles de Gaulle, al lado de 365 Food Rd, Santo Domingo Este", lat:18.5116736, lng:-69.8308011, horario:"Abierto - Ver horario en tienda", telefono:"809-567-1398"}
-];
-var tiendas = [];
-var marcadores = [];
-var miUbicacion = null;
-function dibujarTiendas(){
-  marcadores.forEach(m=>map.removeLayer(m));
-  marcadores=[];
-  tiendas.forEach((ti)=>{
-    var m = L.marker([ti.lat,ti.lng], {icon: iconoBotella}).addTo(map);
-    m.bindPopup('<b>'+ti.nombre+'</b><br>'+ti.zona+'<br>'+(ti.horario||'')+'<br>'+(ti.telefono||''));
-    marcadores.push(m);
+function mostrar(){
+  const q=document.getElementById('buscador').value.toLowerCase();
+  let filtradas=tiendas.filter(t=>(t.nombre+' '+t.zona).toLowerCase().includes(q));
+  filtradas=filtradas.map(t=>{
+    let d=null;
+    if(miLat) d=distKm(miLat,miLng,t.lat,t.lng);
+    return {...t, d};
   });
+  if(miLat) filtradas.sort((a,b)=>a.d-b.d);
+  document.getElementById('contador').innerText=filtradas.length+' tiendas encontradas';
+  document.getElementById('lista').innerHTML=filtradas.map(t=>{
+    const tel=(t.telefono||'').replace(/[^0-9]/g,'');
+    const wsLink='https://wa.me/1'+tel+'?text='+encodeURIComponent('Hola, quiero pedir un romo en '+t.nombre);
+    const mapaLink='https://www.google.com/maps/search/?api=1&query='+t.lat+','+t.lng;
+    return `<div class="tienda">
+      <h3>${t.nombre}</h3>
+      <p>📍 ${t.zona}</p>
+      <p>🕒 ${t.horario||''}</p>
+      <p>📞 ${t.telefono||''}</p>
+      ${t.d!=null?`<p class="dist">📍 A ${t.d.toFixed(1)} km de ti</p>`:''}
+      <div class="botones">
+        <a class="btn-mapa" href="${mapaLink}" target="_blank">🗺️ Cómo llegar</a>
+        <a class="btn-llamar" href="tel:+1${tel}">📞 Llamar</a>
+        <a class="btn-ws" href="${wsLink}" target="_blank">💬 WhatsApp</a>
+      </div>
+    </div>`;
+  }).join('') || '<p style="text-align:center">No hay resultados</p>';
 }
-function mostrarCercana(lat,lng){
-  if(!tiendas.length) return;
-  let mejorIndex=0, mejorD=9999, mejor=tiendas[0];
-  tiendas.forEach((t,i)=>{
-    let d=distKm(lat,lng,t.lat,t.lng);
-    if(d<mejorD){mejorD=d;mejorIndex=i;mejor=t;}
-  });
-  document.getElementById('cercaTexto').innerText = 'La más cerca: ' + mejor.nombre + ' - a ' + mejorD.toFixed(2) + ' km - ' + mejor.zona;
-  document.getElementById('horarioTexto').innerText = (mejor.horario||'') + ' | 📞 ' + (mejor.telefono||'');
-  document.getElementById('comoLlegar').href = 'https://www.google.com/maps/dir/?api=1&destination=' + mejor.lat + ',' + mejor.lng;
-  marcadores.forEach((m,i)=>{
-    if(i===mejorIndex){ m.setIcon(iconoBotellaCercana); } else { m.setIcon(iconoBotella); }
-  });
-  map.setView([lat,lng],13);
-  if(miUbicacion){ map.removeLayer(miUbicacion); }
-  miUbicacion = L.marker([lat,lng], {icon: iconoBorracho}).addTo(map);
-}
-function pedirUbicacion(){
-  document.getElementById('cercaTexto').innerText = 'Buscando tu ubicación...';
+fetch('tiendas.json?v=105').then(r=>r.json()).then(d=>{tiendas=d;mostrar();}).catch(()=>{document.getElementById('lista').innerHTML='Error cargando tiendas';});
+document.getElementById('buscador').addEventListener('input',mostrar);
+document.getElementById('btnUbicacion').addEventListener('click',()=>{
   if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(
-      p=>mostrarCercana(p.coords.latitude, p.coords.longitude),
-      ()=>mostrarCercana(18.49,-69.86),
-      {timeout:5000, maximumAge:60000}
-    );
-  } else { mostrarCercana(18.49,-69.86); }
-  setTimeout(()=>{
-    let texto = document.getElementById('cercaTexto').innerText;
-    if(texto.includes('Buscando')){ mostrarCercana(18.49,-69.86); }
-  }, 6000);
-}
-// PRIMERO INTENTA CARGAR TODAS DESDE tiendas.json
-fetch('tiendas.json?v=' + Date.now())
-  .then(r=>r.json())
-  .then(data=>{
-    tiendas = data;
-    dibujarTiendas();
-    pedirUbicacion();
-  })
-  .catch(()=>{
-    // SI EL JSON FALLA, USA LAS 7 DE RESPALDO
-    tiendas = tiendasRespaldo;
-    dibujarTiendas();
-    pedirUbicacion();
-  });
+    navigator.geolocation.getCurrentPosition(p=>{miLat=p.coords.latitude;miLng=p.coords.longitude;mostrar();},()=>{alert('Activa tu ubicación');});
+  } else {alert('Tu celular no permite ubicación');}
+});
 </script>
 </body>
 </html>
