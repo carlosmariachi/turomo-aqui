@@ -5,17 +5,18 @@
     "lat": 18.485748,
     "lng": -69.843905,
     "horario": "ABIERTO - Cierra 12:05 a.m. | Abre 9:30 a.m.",
-    "telefono": "809-596-2640"
+    "telefono": "809-596-2640",
+    "tipo": "liquor"
   },
-{
-  "nombre": "On Time Liquor Store - Charles de Gaulle",
-  "lat": 18.492535,
-  "lng": -69.824343,
-  "zona": "Av. Charles de Gaulle, al lado de Shell, Santo Domingo Este",
-  "horario": "Abierto · Cierra a las 12 a.m.",
-  "telefono": "809-576-7665",
-  "tipo": "liquor"
-},
+  {
+    "nombre": "On Time Liquor Store - Charles de Gaulle",
+    "lat": 18.492535,
+    "lng": -69.824343,
+    "zona": "Av. Charles de Gaulle, al lado de Shell, Santo Domingo Este",
+    "horario": "Abierto · Cierra a las 12 a.m.",
+    "telefono": "809-576-7665",
+    "tipo": "liquor"
+  },
   {
     "nombre": "Mega Drinks - San Vicente",
     "lat": 18.494181,
@@ -26,129 +27,129 @@
     "tipo": "liquor"
   },
   {
-  "nombre": "Super Edwin Market",
-  "zona": "Av. Sabana Larga, Santo Domingo Este - Frente a Casa Vinicio, Cerca de Ensanche Ozama",
-  "lat": 18.4903147,
-  "lng": -69.8654499,
-  "horario": "ABIERTO - 24 Horas",
-  "telefono": "809-432-7345",
-  "tipo":  "liquor"
+    "nombre": "Super Edwin Market",
+    "zona": "Av. Sabana Larga, Santo Domingo Este - Frente a Casa Vinicio, Cerca de Ensanche Ozama",
+    "lat": 18.4903147,
+    "lng": -69.8654499,
+    "horario": "ABIERTO - 24 Horas",
+    "telefono": "809-432-7345",
+    "tipo": "liquor"
   },
   {
-  "nombre": "La Zona Liquor Store",
-  "zona": "C. Barahona 299, Santo Domingo 10309",
-  "lat": 18.481283,
-  "lng": -69.904378,
-  "horario": "Abierto · Cierra a las 12 a.m.",
-  "telefono": "809-895-4685",
-  "tipo": "liquor"
-},
-{
-  "nombre": "Drinks 2 Go Av. Winston Churchill",
-  "zona": "Plaza New Orleans, Av. Winston Churchill, Santo Domingo",
-  "lat": 18.476929,
-  "lng": -69.944418,
-  "horario": "Abierto · Cierra a las 12 a.m.",
-  "telefono": "809-987-1313",
-  "tipo": "liquor"
-},
-{
-  "nombre": "Drinks 2 Go",
-  "zona": "Av. Máximo Gómez, cerca de C. Juan Sánchez Ramírez",
-  "lat": 18.4640117,
-  "lng": -69.9093573,
-  "horario": "Abierto · Cierra a las 12 a.m.",
-  "telefono": "809-463-8283",
-  "tipo": "liquor"
-},
+    "nombre": "La Zona Liquor Store",
+    "zona": "C. Barahona 299, Santo Domingo 10309",
+    "lat": 18.481283,
+    "lng": -69.904378,
+    "horario": "Abierto · Cierra a las 12 a.m.",
+    "telefono": "809-895-4685",
+    "tipo": "liquor"
+  },
   {
-  "nombre": "Drinks 2 Go Independencia",
-  "zona": "Av. Independencia, Esq. 2da, Jardines del Mirador km 7 1/2",
-  "lat": 18.4400719,
-  "lng": -69.9471178,
-  "horario": "Abierto · Cierra a las 12 a.m.",
-  "telefono": "809-987-1313",
-  "tipo": "liquor"
-},
-{
-  "nombre": "Drinks 2 Go Núñez de Cáceres",
-  "zona": "Av. José Núñez de Cáceres 115, Santo Domingo",
-  "lat": 18.4656002,
-  "lng": -69.9592068,
-  "horario": "Abierto · Cierra a las 12 a.m.",
-  "telefono": "809-987-1313",
-  "tipo": "liquor"
-},
-{
-  "nombre": "Albert's Licores",
-  "zona": "Av. Jiménez Moya, Santo Domingo",
-  "lat": 18.4550389,
-  "lng": -69.9303365,
-  "horario": "Abierto · Cierra a las 12 a.m.",
-  "telefono": "809-000-0000",
-  "tipo": "liquor"
-},
-{
-  "nombre": "Drin Cauchera",
-  "zona": "Av. Charles de Gaulle con Av. 11va, Santo Domingo",
-  "lat": 18.4782535,
-  "lng": -69.8282761,
-  "horario": "Abierto · Cierra a las 12 a.m.",
-  "telefono": "809-000-0000",
-  "tipo": "liquor"
-},
-{
-  "nombre": "Eco Licores",
-  "zona": "Av. Ecológica, Santo Domingo",
-  "lat": 18.4838284,
-  "lng": -69.7605664,
-  "horario": "Abierto · Cierra a las 12 a.m.",
-  "telefono": "809-000-0000",
-  "tipo": "liquor"
-},
-{
-  "nombre": "2 Copas 2 Liquor Store",
-  "zona": "C. Prado Efímero, Santo Domingo",
-  "lat": 18.4846952,
-  "lng": -69.7785892,
-  "horario": "Abierto · Cierra a las 12 a.m.",
-  "telefono": "809-000-0000",
-  "tipo": "liquor"
-},
-{
-  "nombre": "La Casa De La Caña",
-  "zona": "Av. Venezuela, Santo Domingo",
-  "lat": 18.4886985,
-  "lng": -69.8701672,
-  "horario": "Abierto · Cierra a las 12 a.m.",
-  "telefono": "809-000-0000",
-  "tipo": "liquor"
-},
-{
-  "nombre": "El Mercadito de Antonio",
-  "zona": "Av. Dr. Delgado, Santo Domingo",
-  "lat": 18.4723537,
-  "lng": -69.8980628,
-  "horario": "Abierto · Cierra a las 12 a.m.",
-  "telefono": "809-000-0000",
-  "tipo": "liquor"
-},
-{
-  "nombre": "La Casa de la Caña - San Souci",
-  "zona": "San Souci, Santo Domingo",
-  "lat": 18.475272,
-  "lng": -69.8781092,
-  "horario": "Abierto · Cierra a las 12 a.m.",
-  "telefono": "809-000-0000",
-  "tipo": "liquor"
-},
-{
-  "nombre": "Kapicua Liquor Store - Charles de Gaulle",
-  "zona": "Av. Charles de Gaulle, al lado de 365 Food Rd, Santo Domingo Este",
-  "lat": 18.5116736,
-  "lng": -69.8308011,
-  "horario": "Abierto - Ver horario en tienda",
-  "telefono": "809-567- 1398"
-  "tipo": "liquor"
-}
+    "nombre": "Drinks 2 Go Av. Winston Churchill",
+    "zona": "Plaza New Orleans, Av. Winston Churchill, Santo Domingo",
+    "lat": 18.476929,
+    "lng": -69.944418,
+    "horario": "Abierto · Cierra a las 12 a.m.",
+    "telefono": "809-987-1313",
+    "tipo": "liquor"
+  },
+  {
+    "nombre": "Drinks 2 Go",
+    "zona": "Av. Máximo Gómez, cerca de C. Juan Sánchez Ramírez",
+    "lat": 18.4640117,
+    "lng": -69.9093573,
+    "horario": "Abierto · Cierra a las 12 a.m.",
+    "telefono": "809-463-8283",
+    "tipo": "liquor"
+  },
+  {
+    "nombre": "Drinks 2 Go Independencia",
+    "zona": "Av. Independencia, Esq. 2da, Jardines del Mirador km 7 1/2",
+    "lat": 18.4400719,
+    "lng": -69.9471178,
+    "horario": "Abierto · Cierra a las 12 a.m.",
+    "telefono": "809-987-1313",
+    "tipo": "liquor"
+  },
+  {
+    "nombre": "Drinks 2 Go Núñez de Cáceres",
+    "zona": "Av. José Núñez de Cáceres 115, Santo Domingo",
+    "lat": 18.4656002,
+    "lng": -69.9592068,
+    "horario": "Abierto · Cierra a las 12 a.m.",
+    "telefono": "809-987-1313",
+    "tipo": "liquor"
+  },
+  {
+    "nombre": "Albert's Licores",
+    "zona": "Av. Jiménez Moya, Santo Domingo",
+    "lat": 18.4550389,
+    "lng": -69.9303365,
+    "horario": "Abierto · Cierra a las 12 a.m.",
+    "telefono": "809-000-0000",
+    "tipo": "liquor"
+  },
+  {
+    "nombre": "Drin Cauchera",
+    "zona": "Av. Charles de Gaulle con Av. 11va, Santo Domingo",
+    "lat": 18.4782535,
+    "lng": -69.8282761,
+    "horario": "Abierto · Cierra a las 12 a.m.",
+    "telefono": "809-000-0000",
+    "tipo": "liquor"
+  },
+  {
+    "nombre": "Eco Licores",
+    "zona": "Av. Ecológica, Santo Domingo",
+    "lat": 18.4838284,
+    "lng": -69.7605664,
+    "horario": "Abierto · Cierra a las 12 a.m.",
+    "telefono": "809-000-0000",
+    "tipo": "liquor"
+  },
+  {
+    "nombre": "2 Copas 2 Liquor Store",
+    "zona": "C. Prado Efímero, Santo Domingo",
+    "lat": 18.4846952,
+    "lng": -69.7785892,
+    "horario": "Abierto · Cierra a las 12 a.m.",
+    "telefono": "809-000-0000",
+    "tipo": "liquor"
+  },
+  {
+    "nombre": "La Casa De La Caña",
+    "zona": "Av. Venezuela, Santo Domingo",
+    "lat": 18.4886985,
+    "lng": -69.8701672,
+    "horario": "Abierto · Cierra a las 12 a.m.",
+    "telefono": "809-000-0000",
+    "tipo": "liquor"
+  },
+  {
+    "nombre": "El Mercadito de Antonio",
+    "zona": "Av. Dr. Delgado, Santo Domingo",
+    "lat": 18.4723537,
+    "lng": -69.8980628,
+    "horario": "Abierto · Cierra a las 12 a.m.",
+    "telefono": "809-000-0000",
+    "tipo": "liquor"
+  },
+  {
+    "nombre": "La Casa de la Caña - San Souci",
+    "zona": "San Souci, Santo Domingo",
+    "lat": 18.475272,
+    "lng": -69.8781092,
+    "horario": "Abierto · Cierra a las 12 a.m.",
+    "telefono": "809-000-0000",
+    "tipo": "liquor"
+  },
+  {
+    "nombre": "Kapicua Liquor Store - Charles de Gaulle",
+    "zona": "Av. Charles de Gaulle, al lado de 365 Food Rd, Santo Domingo Este",
+    "lat": 18.5116736,
+    "lng": -69.8308011,
+    "horario": "Abierto - Ver horario en tienda",
+    "telefono": "809-567-1398",
+    "tipo": "liquor"
+  }
 ]
