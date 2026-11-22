@@ -151,5 +151,15 @@
     "horario": "Abierto - Ver horario en tienda",
     "telefono": "809-567-1398",
     "tipo": "liquor"
-  }
+  },
+  {
+  "id": "fabrica-del-licor",
+  "nombre": "Fábrica del Licor",
+  "direccion": "C. Vaticano esq. C. Vesuvio, Santo Domingo, RD",
+  "referencia": "Al lado de Barra Italy 711",
+  "lat": 18.4886451,
+  "lng": -69.8396711,
+  "maps": "https://www.google.com/maps?q=18.4886451,-69.8396711",
+  "categoria": "Tienda de Romo"
+}
 ]
