@@ -161,5 +161,15 @@
   "lng": -69.8396711,
   "maps": "https://www.google.com/maps?q=18.4886451,-69.8396711",
   "categoria": "Tienda de Romo"
+},
+{
+  "id": "la-reserva-liquor-store",
+  "nombre": "La Reserva Liquor Store",
+  "direccion": "C. Josefa Brea esq. C. 18 Sur, Santo Domingo",
+  "referencia": "Al lado de Josefa Brea, Villa María",
+  "lat": 18.4964521,
+  "lng": -69.8964445,
+  "maps": "https://www.google.com/maps?q=18.4964521,-69.8964445",
+  "categoria": "Tienda de Romo"
 }
 ]
