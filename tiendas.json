@@ -171,5 +171,14 @@
   "lng": -69.8964445,
   "maps": "https://www.google.com/maps?q=18.4964521,-69.8964445",
   "categoria": "Tienda de Romo"
+},
+{
+  "nombre": "La Casa De La Caña - Rómulo",
+  "zona": "Av. Rómulo Betancourt 1416, Santo Domingo",
+  "lat": 18.454589,
+  "lng": -69.944853,
+  "horario": "Abierto - Cierra 9:00 p.m. | Vie y Sáb Cierra 10:00 p.m.",
+  "telefono": "849-344-5594",
+  "tipo": "liquor"
 }
 ]
