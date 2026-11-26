@@ -180,5 +180,17 @@
   "horario": "Abierto - Cierra 9:00 p.m. | Vie y Sáb Cierra 10:00 p.m.",
   "telefono": "849-344-5594",
   "tipo": "liquor"
-}
+},
+{
+    "nombre": "Marcador - Colmado El Baraton de la México, San Carlos",
+    "zona": "C. Juan Bautista, San Carlos, Santo Domingo",
+    "lat": 18.4771942,
+    "lng": -69.8934437,
+    "plus_code": "77CGF4G4+VJJ",
+    "dms": "18°28'37.90\"N, 69°53'36.40\"W",
+    "utm": "19N 405672 E, 2043214 N",
+    "geohash": "d7q31e9jkwxh",
+    "tipo": "liquor",
+    "referencia": "Licor Lab 1623 - Tienda de bebidas alcohólicas"
+  }
 ]
